@@ -1,0 +1,6 @@
+version: '3.8'
+
+services:
+  server:
+    container_name: shortcard-server
+    build: /server
