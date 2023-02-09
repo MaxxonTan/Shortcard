@@ -1,6 +1,24 @@
-version: '3.8'
+version: '3.9'
 
 services:
   server:
     container_name: shortcard-server
     build: /server
+    # Add this to docker-compose.override.yaml
+    volumes:
+      - ./server:/src
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=shortcard-db
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata: 
