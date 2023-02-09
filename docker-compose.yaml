@@ -4,9 +4,6 @@ services:
   server:
     container_name: shortcard-server
     build: /server
-    # Add this to docker-compose.override.yaml
-    volumes:
-      - ./server:/src
     depends_on:
       - db
 

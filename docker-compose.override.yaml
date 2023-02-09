@@ -1,0 +1,8 @@
+# Only run during development
+
+version: '3.9'
+
+services:
+  server:
+    volumes:
+      - ./server:/src
