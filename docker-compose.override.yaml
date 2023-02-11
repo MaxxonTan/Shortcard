@@ -5,4 +5,4 @@ version: '3.9'
 services:
   server:
     volumes:
-      - ./server:/src
+      - C:\Users\Maxxon\Documents\code\Shortcard\server:/src
