@@ -1,8 +1,12 @@
-export default function Home() {
+import Button from "@/components/button"
+import { supabase } from "@/lib/supabaseClient"
+
+export default async function Home() {
 
   return (
     <main>
-      test
+      <p>Components</p>
+      <Button/>
     </main>
   )
 }

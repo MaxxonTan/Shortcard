@@ -11,6 +11,7 @@ module.exports = {
   theme: {
     fontFamily: {
       serif: ["Playfair Display", "serif"],
+      "sans-serif": ["Roboto", "sans-serif"]
     },
     colors: {
       primary: "#F05123",

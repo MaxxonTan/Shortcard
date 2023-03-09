@@ -1,3 +1,5 @@
+import { type } from "os"
+
 export type Json =
   | string
   | number
@@ -67,3 +69,6 @@ export interface Database {
     }
   }
 }
+
+export type Card = Database['public']['Tables']['card']['Row']
+export type Page = Database['public']['Tables']['page']['Row']
