@@ -9,17 +9,18 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    fontFamily: {
-      serif: ["Playfair Display", "serif"],
-      "sans-serif": ["Roboto", "sans-serif"]
+    extend: {
+      fontFamily: {
+        serif: ["Playfair Display", "serif"],
+        "sans-serif": ["Roboto", "sans-serif"],
+      },
+      colors: {
+        primary: "#F05123",
+        secondary: "#FEFCF3",
+        "secondary-dark": "#F5F1E2",
+        "neutral-black": "#575656",
+      },
     },
-    colors: {
-      primary: "#F05123",
-      secondary: "#FEFCF3",
-      "secondary-dark": "#F5F1E2",
-      "neutral-black": "#575656",
-    },
-    extend: {},
   },
   plugins: [],
 };
