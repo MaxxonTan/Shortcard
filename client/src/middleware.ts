@@ -5,8 +5,6 @@ import type { NextRequest } from "next/server";
 import type { Database } from "types/supabase";
 
 export async function middleware(req: NextRequest) {
-  //TODO: Check whether the user is signed in here and redirect accordingly here?
-
   const res = NextResponse.next();
 
   const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
@@ -14,6 +12,11 @@ export async function middleware(req: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
+
+  // If user is not signed in and is already and login page, no need to redirect
+  if (!session && !req.nextUrl.pathname.startsWith("/login")) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 
   return res;
 }
