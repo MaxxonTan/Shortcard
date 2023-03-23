@@ -11,8 +11,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ["Playfair Display", "serif"],
-        "sans-serif": ["Roboto", "sans-serif"],
+        serif: ["var(--font-playfair-display)"],
+        "sans-serif": ["var(--font-roboto)"],
       },
       colors: {
         primary: "#F05123",

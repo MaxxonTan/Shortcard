@@ -3,7 +3,7 @@
 import classNames from "classnames";
 
 type ButtonProp = {
-  text?: String;
+  text?: string;
   color: "Primary" | "Secondary" | "Dark" | "Transparent";
   /**
    * Left Icon component from react-icons
@@ -13,15 +13,19 @@ type ButtonProp = {
    * Right Icon component from react-icons
    */
   rightIcon?: React.ReactNode;
+  horizontalPadding?: String;
   extraClassnames?: String;
   onClick: () => void;
 };
 
-export default function Button(props: ButtonProp) {
+export default function Button({
+  horizontalPadding = "px-4",
+  ...props
+}: ButtonProp) {
   return (
     <button
       className={classNames(
-        "flex items-center gap-2 rounded-md px-3 py-2 font-sans-serif font-semibold ring-neutral-black transition-all hover:ring-2",
+        `${props.extraClassnames} ${horizontalPadding} flex items-center gap-2 whitespace-nowrap rounded-md py-2 font-sans-serif text-base font-medium transition-all hover:scale-105 sm:text-xl`,
         {
           "bg-primary text-white": props.color === "Primary",
           "bg-neutral-black": props.color === "Dark",
