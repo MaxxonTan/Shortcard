@@ -1,10 +1,9 @@
-import Button from "@/components/button";
-import { FaBeer } from "react-icons/fa";
+import { createSupabaseServerClient } from "@/utils/supabase/supabaseServer";
 
 export default async function Home() {
-  return (
-    <main className="p-4">
-      <p>Components</p>
-    </main>
-  );
+  const supabase = createSupabaseServerClient();
+
+  const { data } = await supabase.from("posts").select("*");
+
+  return <pre>{JSON.stringify({ data }, null, 2)}</pre>;
 }
