@@ -6,7 +6,7 @@ import { useSupabase } from "./supabaseProvider";
 
 /**
  * This component listens to changes in auth state using onAuthStateChange().
- * If there are changes, it calls router.refresh() to fetch new data
+ * If there are changes, it calls router.refresh() to refresh the current route and fetch new data
  */
 export default function SupabaseListener({
   serverAccessToken,
