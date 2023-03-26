@@ -12,7 +12,7 @@ module.exports = {
     extend: {
       fontFamily: {
         serif: ["var(--font-playfair-display)"],
-        "sans-serif": ["var(--font-roboto)"],
+        sans: ["var(--font-roboto)"],
       },
       colors: {
         primary: "#F05123",

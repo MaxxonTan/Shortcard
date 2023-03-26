@@ -7,13 +7,13 @@ import { createSupabaseServerClient } from "@/utils/supabase/supabaseServer";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-playfair-display",
 });
 
 const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["300", "400", "400", "700"],
+  weight: ["300", "400", "400", "700", "900"],
   variable: "--font-roboto",
 });
 
@@ -29,15 +29,16 @@ export default async function RootLayout({
   } = await supabase.auth.getSession();
 
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${playfairDisplay.variable} ${roboto.variable}`}
+    >
       {/*
         <head /> will contain the components returned by the nearest parent
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body
-        className={`${playfairDisplay.variable} ${roboto.variable} bg-secondary px-20 font-serif`}
-      >
+      <body className="bg-secondary font-serif">
         <SupabaseProvider>
           <SupabaseListener serverAccessToken={session?.access_token} />
           {children}

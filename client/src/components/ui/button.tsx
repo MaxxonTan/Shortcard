@@ -15,22 +15,25 @@ type ButtonProp = {
   rightIcon?: React.ReactNode;
   horizontalPadding?: String;
   extraClassnames?: String;
+  hasTransition?: Boolean;
   onClick: () => void;
 };
 
 export default function Button({
   horizontalPadding = "px-4",
+  hasTransition = true,
   ...props
 }: ButtonProp) {
   return (
     <button
       className={classNames(
-        `${props.extraClassnames} ${horizontalPadding} flex items-center gap-2 whitespace-nowrap rounded-md py-2 font-sans-serif text-base font-medium transition-all hover:scale-105 sm:text-xl`,
+        `${props.extraClassnames} ${horizontalPadding} flex items-center gap-2 whitespace-nowrap rounded-md py-2 font-serif text-base font-medium  sm:text-xl`,
         {
           "bg-primary text-white": props.color === "Primary",
           "bg-neutral-black": props.color === "Dark",
           "bg-secondary-dark": props.color === "Secondary",
           "bg-transparent text-primary": props.color === "Transparent",
+          "transition-all hover:scale-105": hasTransition,
         }
       )}
       onClick={props.onClick}

@@ -36,12 +36,12 @@ export default function SupabaseProvider({
 }
 
 export const useSupabase = () => {
-  let supabase = useContext(SupabaseContext);
-  if (supabase === undefined) {
+  let supabaseContext = useContext(SupabaseContext);
+  if (supabaseContext === undefined) {
     throw new Error(
       "Supabase instance not found. Make sure to call useSupabase only in components wrapped by SupabaseProvider."
     );
   } else {
-    return supabase;
+    return supabaseContext;
   }
 };

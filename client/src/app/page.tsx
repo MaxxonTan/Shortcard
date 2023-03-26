@@ -1,9 +1,32 @@
-import { createSupabaseServerClient } from "@/utils/supabase/supabaseServer";
+"use client";
 
-export default async function Home() {
-  const supabase = createSupabaseServerClient();
+import { useSupabase } from "@/components/supabase/supabaseProvider";
+import Button from "@/components/ui/button";
+import Image from "next/image";
+import birthdayCardImage from "../../public/birthday_card.png";
 
-  const { data } = await supabase.from("card").select("*");
+export default function HomePage() {
+  const { supabase } = useSupabase();
 
-  return <pre>{JSON.stringify({ data }, null, 2)}</pre>;
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+  };
+
+  return (
+    <main className="mx-auto flex h-screen flex-col items-center justify-center ">
+      <Image src={birthdayCardImage} alt="Birthday Card Icon" priority />
+
+      <h1 className="mb-4 text-center font-serif text-2xl font-bold">
+        Generate birthday cards.
+      </h1>
+      <Button
+        color="Primary"
+        onClick={handleGoogleLogin}
+        text="Sign in with Google"
+        horizontalPadding="px-5 lg:px-10"
+      />
+    </main>
+  );
 }
