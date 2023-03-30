@@ -13,9 +13,10 @@ type ButtonProp = {
    * Right Icon component from react-icons
    */
   rightIcon?: React.ReactNode;
-  horizontalPadding?: String;
-  extraClassnames?: String;
-  hasTransition?: Boolean;
+  horizontalPadding?: string;
+  extraClassnames?: string;
+  hasTransition?: boolean;
+  tooltip?: string;
   onClick: () => void;
 };
 
@@ -37,6 +38,8 @@ export default function Button({
         }
       )}
       onClick={props.onClick}
+      title={props.tooltip}
+      aria-label={props.tooltip}
     >
       {props.leftIcon}
       {props.text && <p>{props.text}</p>}
