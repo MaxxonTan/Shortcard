@@ -3,6 +3,7 @@
 import { useSupabase } from "@/components/supabase/supabaseProvider";
 import Button from "@/components/ui/button";
 import Image, { StaticImageData } from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { MdExitToApp } from "react-icons/md";
@@ -13,7 +14,9 @@ export default function CardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const iconSize = 32;
   const { supabase } = useSupabase();
+  const router = useRouter();
 
   /**
    * The url of the photo
@@ -40,24 +43,26 @@ export default function CardLayout({
         <h1 className="-mt-3 text-center text-5xl font-bold">Cards</h1>
         <Button
           color="Transparent"
-          onClick={() => {}}
-          leftIcon={<FiPlus size={40} />}
+          onClick={() => {
+            router.push("/cards/create");
+          }}
+          leftIcon={<FiPlus size={iconSize} />}
           hasTransition={false}
           tooltip="New Card"
         />
 
         <Image
           src={userPhoto ?? avatar.src}
-          width={40}
-          height={40}
+          width={iconSize}
+          height={iconSize}
           alt="Profile Photo"
-          className="invisible my-auto ml-auto h-min w-11 rounded-full sm:visible"
+          className="invisible my-auto ml-auto h-min w-8 rounded-full sm:visible"
         />
         <Button
           tooltip="Sign Out"
           color="Transparent"
           onClick={handleSignOut}
-          leftIcon={<MdExitToApp size={42} />}
+          leftIcon={<MdExitToApp size={iconSize} />}
           hasTransition={false}
         />
       </header>
