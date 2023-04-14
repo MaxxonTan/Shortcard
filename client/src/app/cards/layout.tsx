@@ -43,9 +43,7 @@ export default function CardLayout({
         <h1 className="-mt-3 text-center text-5xl font-bold">Cards</h1>
         <Button
           color="Transparent"
-          onClick={() => {
-            router.push("/cards/create");
-          }}
+          onClick={() => {}}
           leftIcon={<FiPlus size={iconSize} />}
           hasTransition={false}
           tooltip="New Card"
