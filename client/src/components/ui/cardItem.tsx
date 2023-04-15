@@ -4,7 +4,6 @@ import classNames from "classnames";
 import Link from "next/link";
 import { Card } from "types/supabase";
 import { MdDelete } from "react-icons/md";
-import Button from "./button";
 
 type CardItemProp = {
   card: Card;
@@ -15,7 +14,7 @@ export default function CardItem(props: CardItemProp) {
 
   return (
     <Link
-      href={`/cards/${card.id}`}
+      href={`/cards/${card.id}/edit`}
       className="group relative flex cursor-pointer flex-col gap-2"
     >
       <MdDelete

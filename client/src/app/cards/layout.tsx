@@ -1,13 +1,16 @@
 "use client";
 
-import { useSupabase } from "@/components/supabase/supabaseProvider";
-import Button from "@/components/ui/button";
 import Image, { StaticImageData } from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Dialog, Transition } from "@headlessui/react";
 import { FiPlus } from "react-icons/fi";
 import { MdExitToApp } from "react-icons/md";
+import { useEffect, useState } from "react";
+
+import { useSupabase } from "@/components/supabase/supabaseProvider";
+import Button from "@/components/ui/button";
 import avatar from "../../../public/avatar.png";
+import CustomDialog from "@/components/ui/customDialog";
 
 export default function CardLayout({
   children,
@@ -16,12 +19,12 @@ export default function CardLayout({
 }) {
   const iconSize = 32;
   const { supabase } = useSupabase();
-  const router = useRouter();
 
   /**
    * The url of the photo
    */
   const [userPhoto, setUserPhoto] = useState<string>();
+  const [isCreateCardDialogOpen, setIsCreateCardDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -40,10 +43,14 @@ export default function CardLayout({
     <>
       <header className="flex items-center px-6 py-8 sm:px-10">
         {/* Hacky styling with negative top margin here, caused by h1 doesn't align vertically */}
-        <h1 className="-mt-3 text-center text-5xl font-bold">Cards</h1>
+        <Link href="/cards" className="-mt-3 text-center text-5xl font-bold">
+          Cards
+        </Link>
         <Button
           color="Transparent"
-          onClick={() => {}}
+          onClick={() => {
+            setIsCreateCardDialogOpen(true);
+          }}
           leftIcon={<FiPlus size={iconSize} />}
           hasTransition={false}
           tooltip="New Card"
@@ -62,6 +69,12 @@ export default function CardLayout({
           onClick={handleSignOut}
           leftIcon={<MdExitToApp size={iconSize} />}
           hasTransition={false}
+        />
+        <CustomDialog
+          isOpen={isCreateCardDialogOpen}
+          setOpen={(isOpen) => setIsCreateCardDialogOpen(isOpen)}
+          title="Create Card"
+          content={<div>bruh</div>}
         />
       </header>
 
