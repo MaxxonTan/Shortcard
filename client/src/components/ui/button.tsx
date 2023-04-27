@@ -1,6 +1,7 @@
 "use client";
 
 import classNames from "classnames";
+import { HTMLInputTypeAttribute } from "react";
 
 type ButtonProp = {
   text?: string;
@@ -17,18 +18,20 @@ type ButtonProp = {
   extraClassnames?: string;
   hasTransition?: boolean;
   tooltip?: string;
+  type?: HTMLInputTypeAttribute;
   onClick: () => void;
 };
 
 export default function Button({
   horizontalPadding = "px-4",
   hasTransition = true,
+  type = "button",
   ...props
 }: ButtonProp) {
   return (
     <button
       className={classNames(
-        `${props.extraClassnames} ${horizontalPadding} flex items-center gap-2 whitespace-nowrap rounded-md py-2 font-serif text-base font-medium  sm:text-xl`,
+        `${props.extraClassnames} ${horizontalPadding} flex items-center gap-2 whitespace-nowrap rounded-md py-2 font-serif text-base font-medium  sm:text-lg`,
         {
           "bg-primary text-white": props.color === "Primary",
           "bg-neutral-black": props.color === "Dark",
@@ -42,7 +45,7 @@ export default function Button({
       aria-label={props.tooltip}
     >
       {props.leftIcon}
-      {props.text && <p>{props.text}</p>}
+      {props.text && <p className="w-full text-center">{props.text}</p>}
       {props.rightIcon}
     </button>
   );

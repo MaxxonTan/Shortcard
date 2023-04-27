@@ -5,12 +5,40 @@ import Link from "next/link";
 import { Dialog, Transition } from "@headlessui/react";
 import { FiPlus } from "react-icons/fi";
 import { MdExitToApp } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import { useSupabase } from "@/components/supabase/supabaseProvider";
 import Button from "@/components/ui/button";
 import avatar from "../../../public/avatar.png";
 import CustomDialog from "@/components/ui/customDialog";
+import TextField from "@/components/ui/textField";
+import { Card } from "types/supabase";
+
+type NewCardAction =
+  | { type: "updateFrom"; from: string }
+  | { type: "updateTo"; to: string };
+
+function newCardReducer(card: Card, action: NewCardAction): Card {
+  switch (action.type) {
+    case "updateFrom": {
+      card.from = action.from;
+      return card;
+    }
+    case "updateTo": {
+      card.from = action.to;
+      return card;
+    }
+  }
+}
+
+const emptyCard: Card = {
+  from: "",
+  id: "",
+  user_id: "",
+  to: "",
+  opening_message: null,
+  opening_music: null,
+};
 
 export default function CardLayout({
   children,
@@ -25,6 +53,7 @@ export default function CardLayout({
    */
   const [userPhoto, setUserPhoto] = useState<string>();
   const [isCreateCardDialogOpen, setIsCreateCardDialogOpen] = useState(false);
+  const [newCard, dispatch] = useReducer(newCardReducer, emptyCard);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -37,6 +66,12 @@ export default function CardLayout({
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+  };
+
+  const createCard = async () => {
+    // Insert a new row to Cards table
+    //const { error } = await supabase.from("card").insert(newCard);
+    // Insert an empty page to the newly created card
   };
 
   return (
@@ -74,7 +109,43 @@ export default function CardLayout({
           isOpen={isCreateCardDialogOpen}
           setOpen={(isOpen) => setIsCreateCardDialogOpen(isOpen)}
           title="Create Card"
-          content={<div>bruh</div>}
+          content={
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                createCard();
+              }}
+            >
+              <div className="flex flex-col gap-2">
+                <TextField
+                  label="From"
+                  required
+                  placeholder="Who is this from?"
+                  value={newCard.from ?? ""}
+                  onValueChange={(e) => {
+                    dispatch({ type: "updateFrom", from: e });
+                  }}
+                />
+                <TextField
+                  label="To"
+                  required
+                  placeholder="Who is this for?"
+                  value={newCard.to ?? ""}
+                  onValueChange={(e) => {
+                    dispatch({ type: "updateTo", to: e });
+                  }}
+                />
+                <Button
+                  color="Primary"
+                  text="Create Card"
+                  onClick={() => {}}
+                  hasTransition={false}
+                  extraClassnames="py-1 text-center mt-2 text-sm"
+                  type="submit"
+                />
+              </div>
+            </form>
+          }
         />
       </header>
 
