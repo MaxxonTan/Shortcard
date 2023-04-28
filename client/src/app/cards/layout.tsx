@@ -12,32 +12,56 @@ import Button from "@/components/ui/button";
 import avatar from "../../../public/avatar.png";
 import CustomDialog from "@/components/ui/customDialog";
 import TextField from "@/components/ui/textField";
-import { Card } from "types/supabase";
+import { Card, Page, InsertCard, InsertPage } from "types/supabase";
+import { User } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
+import BarLoader from "react-spinners/BarLoader";
+
+type newCardState = {
+  card: InsertCard;
+  isLoading: boolean;
+  error: string;
+};
 
 type NewCardAction =
   | { type: "updateFrom"; from: string }
-  | { type: "updateTo"; to: string };
+  | { type: "updateTo"; to: string }
+  | { type: "updateIsLoading"; isLoading: boolean }
+  | { type: "updateError"; error: string };
 
-function newCardReducer(card: Card, action: NewCardAction): Card {
+function newCardReducer(
+  newCardState: newCardState,
+  action: NewCardAction
+): newCardState {
   switch (action.type) {
     case "updateFrom": {
+      const card = { ...newCardState.card };
       card.from = action.from;
-      return card;
+      return { ...newCardState, card };
     }
     case "updateTo": {
-      card.from = action.to;
-      return card;
+      const card = { ...newCardState.card };
+      card.to = action.to;
+      return { ...newCardState, card };
+    }
+    case "updateIsLoading": {
+      return { ...newCardState, isLoading: action.isLoading };
+    }
+    case "updateError": {
+      return { ...newCardState, error: action.error };
     }
   }
 }
 
-const emptyCard: Card = {
-  from: "",
-  id: "",
-  user_id: "",
-  to: "",
-  opening_message: null,
-  opening_music: null,
+const initialNewCardState: newCardState = {
+  card: {
+    from: "",
+    user_id: "",
+    opening_message: null,
+    opening_music: null,
+  },
+  isLoading: false,
+  error: "",
 };
 
 export default function CardLayout({
@@ -47,18 +71,24 @@ export default function CardLayout({
 }) {
   const iconSize = 32;
   const { supabase } = useSupabase();
+  const router = useRouter();
 
   /**
    * The url of the photo
    */
-  const [userPhoto, setUserPhoto] = useState<string>();
+  const [user, setUser] = useState<User>();
   const [isCreateCardDialogOpen, setIsCreateCardDialogOpen] = useState(false);
-  const [newCard, dispatch] = useReducer(newCardReducer, emptyCard);
+  const [newCardState, newCardDispatch] = useReducer(
+    newCardReducer,
+    initialNewCardState
+  );
 
   useEffect(() => {
     const fetchUser = async () => {
       const user = await supabase.auth.getUser();
-      setUserPhoto(user.data.user?.user_metadata.avatar_url);
+      if (user.data.user) {
+        setUser(user.data.user);
+      }
     };
 
     fetchUser();
@@ -69,9 +99,46 @@ export default function CardLayout({
   };
 
   const createCard = async () => {
+    newCardDispatch({ type: "updateIsLoading", isLoading: true });
+
+    // Create new card object
+    const card: InsertCard = { ...newCardState.card };
+    if (user) card.user_id = user?.id;
+
     // Insert a new row to Cards table
-    //const { error } = await supabase.from("card").insert(newCard);
+    const { data: createdCard, error: createCardError } = await supabase
+      .from("card")
+      .insert(card)
+      .select();
+
+    if (createCardError && !createdCard) {
+      newCardDispatch({ type: "updateError", error: createCardError.message });
+      return;
+    }
+
+    // Create the first page object
+    const firstPage: InsertPage = {
+      card_id: createdCard[0].id,
+      canvas_content: null,
+      page_index: 0,
+    };
+
     // Insert an empty page to the newly created card
+    const { data: createdPage, error: createPageError } = await supabase
+      .from("page")
+      .insert(firstPage)
+      .select();
+
+    if (createPageError) {
+      newCardDispatch({ type: "updateError", error: createPageError.message });
+      return;
+    }
+
+    // Navigate to card edit page
+    router.push(`/cards/${createdCard[0].id}/edit`);
+    setIsCreateCardDialogOpen(false);
+
+    newCardDispatch({ type: "updateIsLoading", isLoading: false });
   };
 
   return (
@@ -92,7 +159,7 @@ export default function CardLayout({
         />
 
         <Image
-          src={userPhoto ?? avatar.src}
+          src={user?.user_metadata.avatar_url ?? avatar.src}
           width={iconSize}
           height={iconSize}
           alt="Profile Photo"
@@ -121,28 +188,37 @@ export default function CardLayout({
                   label="From"
                   required
                   placeholder="Who is this from?"
-                  value={newCard.from ?? ""}
+                  value={newCardState.card.from ?? ""}
                   onValueChange={(e) => {
-                    dispatch({ type: "updateFrom", from: e });
+                    newCardDispatch({ type: "updateFrom", from: e });
                   }}
                 />
                 <TextField
                   label="To"
                   required
                   placeholder="Who is this for?"
-                  value={newCard.to ?? ""}
+                  value={newCardState.card.to ?? ""}
                   onValueChange={(e) => {
-                    dispatch({ type: "updateTo", to: e });
+                    newCardDispatch({ type: "updateTo", to: e });
                   }}
                 />
-                <Button
-                  color="Primary"
-                  text="Create Card"
-                  onClick={() => {}}
-                  hasTransition={false}
-                  extraClassnames="py-1 text-center mt-2 text-sm"
-                  type="submit"
-                />
+                {newCardState.isLoading ? (
+                  <BarLoader
+                    color="#F05123"
+                    className="mx-auto mt-2"
+                    width="100%"
+                  />
+                ) : (
+                  <Button
+                    color="Primary"
+                    text="Create Card"
+                    onClick={() => {}}
+                    hasTransition={false}
+                    extraClassnames="py-1 text-center mt-2 text-sm"
+                    type="submit"
+                  />
+                )}
+                {newCardState.error && <p>{newCardState.error}</p>}
               </div>
             </form>
           }

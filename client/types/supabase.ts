@@ -20,7 +20,7 @@ export interface Database {
         };
         Insert: {
           from?: string | null;
-          id: string;
+          id?: string;
           opening_message?: string | null;
           opening_music?: string | null;
           to?: string | null;
@@ -72,4 +72,6 @@ export interface Database {
 }
 
 export type Card = Database["public"]["Tables"]["card"]["Row"];
+export type InsertCard = Database["public"]["Tables"]["card"]["Insert"];
 export type Page = Database["public"]["Tables"]["page"]["Row"];
+export type InsertPage = Database["public"]["Tables"]["page"]["Insert"];

@@ -20,6 +20,8 @@ export default function TextField(props: TextFieldProp) {
         name={props.label}
         className="rounded-sm bg-secondary-dark px-3 py-2 outline-none"
         placeholder={props.placeholder}
+        value={props.value}
+        onChange={(e) => props.onValueChange(e.currentTarget.value)}
       />
       {props.errorMessage && (
         <p className="text-xs text-red-500">{props.errorMessage}</p>
