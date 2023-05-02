@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest) {
 
   // Redirect to cards page if user signed in
   if (session && req.nextUrl.pathname === "/") {
-    return NextResponse.redirect(new URL("/cards", req.url));
+    return NextResponse.redirect(new URL("/cards/all", req.url));
   }
 
   // TODO: Redirect to unathorized page if user goes to card edit page that isn't theirs

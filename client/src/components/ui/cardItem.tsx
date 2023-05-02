@@ -27,8 +27,8 @@ export default function CardItem(props: CardItemProp) {
           // TODO: Delete card
         }}
       />
-      <div className="h-56 w-56 rounded-md bg-primary ring-black transition-all group-hover:ring-2" />
-      <h1 className="font-medium group-hover:underline">
+      <div className="h-56 w-56 rounded-md bg-primary ring-neutral-black transition-all group-hover:ring-2" />
+      <h1 className="font-medium text-neutral-black group-hover:underline">
         <b>To:</b> {card.to}
       </h1>
     </Link>

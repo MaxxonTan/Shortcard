@@ -35,7 +35,7 @@ export default function Button({
         {
           "bg-primary text-white": props.color === "Primary",
           "bg-neutral-black": props.color === "Dark",
-          "bg-secondary-dark": props.color === "Secondary",
+          "bg-secondary-dark text-neutral-black": props.color === "Secondary",
           "bg-transparent text-primary": props.color === "Transparent",
           "transition-all hover:scale-105": hasTransition,
         }

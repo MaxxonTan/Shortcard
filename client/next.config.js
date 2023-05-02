@@ -6,6 +6,12 @@ const nextConfig = {
   images: {
     remotePatterns: [{ hostname: "lh3.googleusercontent.com" }],
   },
+  webpack: (config) => {
+    config.externals.push({
+      canvas: "commonjs canvas",
+    });
+    return config;
+  },
 };
 
 module.exports = nextConfig;
