@@ -5,7 +5,12 @@ import { fabric } from "fabric";
 import { Canvas } from "fabric/fabric-impl";
 import TextField from "@/components/ui/textField";
 import Button from "@/components/ui/button";
-import { BsInputCursorText, BsMusicNoteBeamed } from "react-icons/bs";
+import {
+  BsInputCursorText,
+  BsLink45Deg,
+  BsMusicNoteBeamed,
+} from "react-icons/bs";
+import { MdOutlineInsertPhoto } from "react-icons/md";
 
 export default function EditCardPage(params: { params: { id: string } }) {
   const firstFabricRef = useRef<Canvas | null>(null);
@@ -57,20 +62,21 @@ export default function EditCardPage(params: { params: { id: string } }) {
             onClick={() => {}}
             text="Link"
             extraClassnames="w-full"
-            leftIcon={<BsMusicNoteBeamed color="#F05123" size={24} />}
+            leftIcon={<BsLink45Deg color="#F05123" size={24} />}
           />
           <Button
             color="Secondary"
             onClick={() => {}}
             text="Media"
             extraClassnames="w-full"
-            leftIcon={<BsMusicNoteBeamed color="#F05123" size={24} />}
+            leftIcon={<MdOutlineInsertPhoto color="#F05123" size={24} />}
           />
         </div>
       </div>
       <div className="flex rounded-md ring-4 ring-neutral-black">
-        <canvas ref={firstCanvasRef} />
-        <canvas ref={secondCanvasRef} />
+        <canvas ref={firstCanvasRef} className="rounded-md" />
+        <div className="h-full w-0.5 bg-neutral-black"></div>
+        <canvas ref={secondCanvasRef} className="rounded-md" />
       </div>
     </div>
   );
