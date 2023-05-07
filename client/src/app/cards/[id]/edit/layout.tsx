@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { BiArrowBack } from "react-icons/bi";
 import { FaShare } from "react-icons/fa";
 
@@ -9,12 +10,16 @@ export default function EditCardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
   return (
     <>
       <header className="flex items-center gap-3">
         <Button
           color="Transparent"
-          onClick={() => {}}
+          onClick={() => {
+            router.back();
+          }}
           leftIcon={<BiArrowBack size={38} />}
           hasTransition={false}
           tooltip="New Card"

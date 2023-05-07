@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Playfair_Display, Roboto } from "@next/font/google";
+import { Playfair_Display, Roboto_Flex } from "@next/font/google";
 
 import SupabaseListener from "@/components/supabase/supabaseListener";
 import SupabaseProvider from "@/components/supabase/supabaseProvider";
@@ -7,13 +7,11 @@ import { createSupabaseServerClient } from "@/utils/supabase/supabaseServer";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-playfair-display",
 });
 
-const roboto = Roboto({
+const roboto = Roboto_Flex({
   subsets: ["latin"],
-  weight: ["300", "400", "400", "700", "900"],
   variable: "--font-roboto",
 });
 

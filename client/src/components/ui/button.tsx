@@ -31,7 +31,7 @@ export default function Button({
   return (
     <button
       className={classNames(
-        `${props.extraClassnames} ${horizontalPadding} flex items-center gap-2 whitespace-nowrap rounded-md py-2 font-serif text-base font-medium  sm:text-lg`,
+        `${props.extraClassnames} ${horizontalPadding} flex items-center justify-center gap-2 whitespace-nowrap rounded-md py-2 font-serif text-base font-medium  sm:text-lg`,
         {
           "bg-primary text-white": props.color === "Primary",
           "bg-neutral-black": props.color === "Dark",
@@ -45,7 +45,7 @@ export default function Button({
       aria-label={props.tooltip}
     >
       {props.leftIcon}
-      {props.text && <p className="w-full text-center">{props.text}</p>}
+      {props.text && <p className="text-center">{props.text}</p>}
       {props.rightIcon}
     </button>
   );

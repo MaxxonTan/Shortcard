@@ -13,7 +13,9 @@ type TextFieldProp = {
 export default function TextField(props: TextFieldProp) {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={props.label}>{props.label}</label>
+      <label htmlFor={props.label} className="font-sans text-neutral-black">
+        {props.label}
+      </label>
       <input
         required={props.required ?? false}
         type="text"
