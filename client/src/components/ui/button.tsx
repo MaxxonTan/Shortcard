@@ -18,6 +18,7 @@ type ButtonProp = {
   extraClassnames?: string;
   hasTransition?: boolean;
   tooltip?: string;
+  isDisabled?: boolean;
   type?: HTMLInputTypeAttribute;
   onClick: () => void;
 };
@@ -25,6 +26,7 @@ type ButtonProp = {
 export default function Button({
   horizontalPadding = "px-4",
   hasTransition = true,
+  isDisabled = false,
   type = "button",
   ...props
 }: ButtonProp) {
@@ -38,8 +40,10 @@ export default function Button({
           "bg-secondary-dark text-neutral-black": props.color === "Secondary",
           "bg-transparent text-primary": props.color === "Transparent",
           "transition-all hover:scale-105": hasTransition,
+          "cursor-not-allowed": isDisabled,
         }
       )}
+      disabled={isDisabled}
       onClick={props.onClick}
       title={props.tooltip}
       aria-label={props.tooltip}

@@ -6,11 +6,14 @@ import { Canvas } from "fabric/fabric-impl";
 import TextField from "@/components/ui/textField";
 import Button from "@/components/ui/button";
 import {
+  BsArrowLeftShort,
+  BsArrowRightShort,
   BsInputCursorText,
   BsLink45Deg,
   BsMusicNoteBeamed,
+  BsPlus,
 } from "react-icons/bs";
-import { MdOutlineInsertPhoto } from "react-icons/md";
+import { MdDelete, MdOutlineInsertPhoto } from "react-icons/md";
 
 type CardEditState = {
   pageJSONs: string[];
@@ -103,7 +106,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
     fabricRef.current = new fabric.Canvas("edit-canvas", {
       height: 500,
       width: newCanvasWidth,
-      backgroundColor: "green",
+      backgroundColor: "white",
     });
 
     // If there is an existing canvas, load it up!
@@ -116,13 +119,15 @@ export default function EditCardPage(params: { params: { id: string } }) {
   }, [cardState.currentPageIndex]);
 
   return (
-    <div className="flex flex-wrap gap-8">
-      <div className="mr-auto flex max-w-xs flex-1 flex-col gap-2">
+    <div className="flex flex-wrap items-center gap-8">
+      <div className="my-ayto mr-auto flex max-w-xs flex-1 flex-col gap-2">
         <TextField
           label="Opening Message"
+          placeholder="Enter opening message here..."
           onValueChange={(val) => {}}
           value=""
         />
+        {/* TODO: Use Grid */}
         <div className="flex gap-2">
           <Button
             color="Secondary"
@@ -138,6 +143,34 @@ export default function EditCardPage(params: { params: { id: string } }) {
           />
           <Button
             color="Secondary"
+            onClick={() => {}}
+            text="Music"
+            extraClassnames="w-full"
+            leftIcon={<BsMusicNoteBeamed color="#F05123" size={24} />}
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button
+            color="Secondary"
+            onClick={() => {}}
+            text="Link"
+            extraClassnames="w-full"
+            leftIcon={<BsLink45Deg color="#F05123" size={24} />}
+          />
+          <Button
+            color="Secondary"
+            onClick={() => {}}
+            text="Media"
+            extraClassnames="w-full"
+            leftIcon={<MdOutlineInsertPhoto color="#F05123" size={24} />}
+          />
+        </div>
+        <div className="flex items-center justify-center">
+          <p className="text-lg">
+            page {cardState.currentPageIndex + 1} / {cardState.pageJSONs.length}
+          </p>
+          <Button
+            color="Transparent"
             onClick={() => {
               cardStateDispatch({ type: "addPage" });
               cardStateDispatch({
@@ -146,26 +179,49 @@ export default function EditCardPage(params: { params: { id: string } }) {
                 currentPageJSON: JSON.stringify(fabricRef.current),
               });
             }}
-            text="Add page"
-            extraClassnames="w-full"
-            leftIcon={<BsMusicNoteBeamed color="#F05123" size={24} />}
+            rightIcon={<BsPlus size={24} />}
+            hasTransition={false}
+            extraClassnames="mt-1"
+            tooltip="Add Page"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center justify-center">
           <Button
-            color="Secondary"
+            color="Transparent"
+            onClick={() => {
+              cardStateDispatch({
+                type: "changePage",
+                toPageIndex: cardState.currentPageIndex - 1,
+                currentPageJSON: JSON.stringify(fabricRef.current),
+              });
+            }}
+            rightIcon={
+              <BsArrowLeftShort
+                size={24}
+                color={cardState.currentPageIndex === 0 ? "grey" : "black"}
+              />
+            }
+            hasTransition={false}
+            horizontalPadding="px-2"
+            tooltip="Previous Page"
+            isDisabled={cardState.currentPageIndex === 0}
+          />
+          <Button
+            color="Transparent"
             onClick={() => {
               cardStateDispatch({
                 type: "deletePage",
                 pageIndex: cardState.currentPageIndex,
               });
             }}
-            text="Delete Page"
-            extraClassnames="w-full"
-            leftIcon={<BsLink45Deg color="#F05123" size={24} />}
+            rightIcon={<MdDelete size={24} />}
+            hasTransition={false}
+            horizontalPadding="px-2"
+            tooltip="Delete Page"
+            isDisabled={cardState.pageJSONs.length === 1}
           />
           <Button
-            color="Secondary"
+            color="Transparent"
             onClick={() => {
               cardStateDispatch({
                 type: "changePage",
@@ -173,9 +229,22 @@ export default function EditCardPage(params: { params: { id: string } }) {
                 currentPageJSON: JSON.stringify(fabricRef.current),
               });
             }}
-            text="Next Page"
-            extraClassnames="w-full"
-            leftIcon={<MdOutlineInsertPhoto color="#F05123" size={24} />}
+            rightIcon={
+              <BsArrowRightShort
+                size={24}
+                color={
+                  cardState.currentPageIndex === cardState.pageJSONs.length - 1
+                    ? "grey"
+                    : "black"
+                }
+              />
+            }
+            hasTransition={false}
+            horizontalPadding="px-2"
+            tooltip="Next Page"
+            isDisabled={
+              cardState.currentPageIndex === cardState.pageJSONs.length - 1
+            }
           />
         </div>
       </div>

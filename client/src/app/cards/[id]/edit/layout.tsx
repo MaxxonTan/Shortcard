@@ -34,7 +34,7 @@ export default function EditCardLayout({
           rightIcon={<FaShare size={24} />}
         />
       </header>
-      <main className="mt-4">{children}</main>
+      <main className="mt-8 h-full">{children}</main>
     </>
   );
 }
