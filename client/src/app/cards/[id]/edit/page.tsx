@@ -63,7 +63,15 @@ function cardEditReducer(
       return result;
     }
     case "deletePage": {
-      return newCardState;
+      const result = { ...newCardState };
+
+      // Delete from pageJsons
+      result.pageJSONs.splice(result.currentPageIndex, 1);
+
+      // Update current page index
+      result.currentPageIndex -= 1;
+
+      return result;
     }
   }
 }
@@ -175,7 +183,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
               cardStateDispatch({ type: "addPage" });
               cardStateDispatch({
                 type: "changePage",
-                toPageIndex: cardState.currentPageIndex,
+                toPageIndex: cardState.currentPageIndex + 1,
                 currentPageJSON: JSON.stringify(fabricRef.current),
               });
             }}
