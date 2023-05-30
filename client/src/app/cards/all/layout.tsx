@@ -69,7 +69,6 @@ export default function AllCardsLayout({
   children: React.ReactNode;
 }) {
   const iconSize = 32;
-  const pathname = usePathname();
   const { supabase } = useSupabase();
   const router = useRouter();
 

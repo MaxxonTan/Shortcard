@@ -14,92 +14,57 @@ import {
   BsPlus,
 } from "react-icons/bs";
 import { MdDelete, MdOutlineInsertPhoto } from "react-icons/md";
-
-type CardEditState = {
-  pageJSONs: string[];
-  // Index of current page in pageJsons
-  currentPageIndex: number;
-};
-
-type CardEditAction =
-  | {
-      type: "changePage";
-      /**
-       * The index of the page you want to change to.
-       **/
-      toPageIndex: number;
-      /**
-       * The current page canvas converted to JSON format.
-       * Used for storing to the list of pageJSONs.
-       */
-      currentPageJSON: string;
-    }
-  | {
-      type: "addPage";
-    }
-  | {
-      type: "deletePage";
-      pageIndex: number;
-    };
-
-function cardEditReducer(
-  newCardState: CardEditState,
-  action: CardEditAction
-): CardEditState {
-  switch (action.type) {
-    case "addPage": {
-      // Add new page
-      const result = { ...newCardState };
-      result.pageJSONs.push("");
-
-      return result;
-    }
-    case "changePage": {
-      const result = { ...newCardState };
-      result.currentPageIndex = action.toPageIndex;
-
-      result.pageJSONs[newCardState.currentPageIndex] = action.currentPageJSON;
-
-      return result;
-    }
-    case "deletePage": {
-      const result = { ...newCardState };
-
-      // Delete from pageJsons
-      result.pageJSONs.splice(result.currentPageIndex, 1);
-
-      // Update current page index
-      result.currentPageIndex -= 1;
-
-      return result;
-    }
-  }
-}
-
-const initialCardEdit: CardEditState = {
-  pageJSONs: [""],
-  currentPageIndex: 0,
-};
+import { HiOutlineSave } from "react-icons/hi";
+import { useSupabase } from "@/components/supabase/supabaseProvider";
+import { Page } from "types/supabase";
+import { v4 as uuidv4 } from "uuid";
+import { cardEditReducer, initialCardEdit } from "./cardEditReducer";
 
 export default function EditCardPage(params: { params: { id: string } }) {
-  const fabricRef = useRef<Canvas | null>(null);
+  const { supabase } = useSupabase();
+
+  /**
+   * Store the pages that are retrieved from the db.
+   * Note: The content of the pages are not updated until the user saves the page.
+   */
+  const pages = useRef<Page[]>([]);
   const [cardState, cardStateDispatch] = useReducer(
     cardEditReducer,
     initialCardEdit
   );
 
-  // Loads the first page on page load
+  const fabricRef = useRef<Canvas | null>(null);
+
+  // Loads the first page on page load.
   useEffect(() => {
+    // Get pages from db.
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from("page")
+        .select()
+        .eq("card_id", params.params.id);
+
+      if (!error && data) {
+        cardStateDispatch({
+          type: "loadPage",
+          pages: data,
+        });
+
+        pages.current = data;
+      }
+    };
+
+    fetchData();
+
     cardStateDispatch({
-      type: "changePage",
-      toPageIndex: 0,
-      currentPageJSON: "",
+      type: "loadPage",
+      pages: pages.current,
     });
   }, []);
 
-  // Update the canvas everytime the page changes
+  // Update the canvas everytime the page index changes.
   useEffect(() => {
-    // Clear the canvas
+    // Clear the canvas.
     fabricRef.current && fabricRef.current.dispose();
 
     // Check whether it's the first or last page, if it is then the width for the new canvas should be different.
@@ -124,7 +89,44 @@ export default function EditCardPage(params: { params: { id: string } }) {
         fabricRef.current.renderAll.bind(fabricRef.current)
       );
     }
-  }, [cardState.currentPageIndex]);
+  }, [cardState.currentPageIndex, cardState.pageJSONs]);
+
+  async function saveCard() {
+    const newCardState = cardEditReducer(cardState, {
+      type: "changePage",
+      currentPageJSON: JSON.stringify(fabricRef.current),
+      toPageIndex: cardState.currentPageIndex,
+    });
+
+    // Compare the cardState to pages ref and UPSERT to Supabase.
+    newCardState.pageJSONs.forEach((pageJSON, index) => {
+      // Find page id
+      const pageIndex = pages.current.findIndex((page) => {
+        return page.page_index === index;
+      });
+
+      if (pageIndex !== -1) {
+        pages.current[pageIndex].canvas_content = pageJSON;
+      } else {
+        pages.current.push({
+          canvas_content: pageJSON,
+          card_id: params.params.id,
+          id: uuidv4(),
+          page_index: index,
+        });
+      }
+    });
+
+    // Remove any pages that is in the db but not locally (deleted pages).
+    while (pages.current.length > cardState.pageJSONs.length) {
+      pages.current.pop();
+    }
+
+    const { data, error } = await supabase
+      .from("page")
+      .upsert(pages.current)
+      .select();
+  }
 
   return (
     <div className="flex flex-wrap items-center gap-8">
@@ -142,7 +144,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
             onClick={() => {
               fabricRef.current &&
                 fabricRef.current.add(
-                  new fabric.Textbox("hello world", { left: 100, top: 100 })
+                  new fabric.Textbox("text", { left: 100, top: 100 })
                 );
             }}
             text="Text"
@@ -226,7 +228,18 @@ export default function EditCardPage(params: { params: { id: string } }) {
             hasTransition={false}
             horizontalPadding="px-2"
             tooltip="Delete Page"
-            isDisabled={cardState.pageJSONs.length === 1}
+            isDisabled={
+              cardState.pageJSONs.length === 1 ||
+              cardState.currentPageIndex === 0
+            }
+          />
+          <Button
+            color="Transparent"
+            onClick={saveCard}
+            rightIcon={<HiOutlineSave size={24} />}
+            hasTransition={false}
+            horizontalPadding="px-2"
+            tooltip="Save Page"
           />
           <Button
             color="Transparent"
