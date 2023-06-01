@@ -19,6 +19,7 @@ import { useSupabase } from "@/components/supabase/supabaseProvider";
 import { Page } from "types/supabase";
 import { v4 as uuidv4 } from "uuid";
 import { cardEditReducer, initialCardEdit } from "./cardEditReducer";
+import { generateTextbox } from "@/utils/fabric/controls";
 
 export default function EditCardPage(params: { params: { id: string } }) {
   const { supabase } = useSupabase();
@@ -142,10 +143,12 @@ export default function EditCardPage(params: { params: { id: string } }) {
           <Button
             color="Secondary"
             onClick={() => {
-              fabricRef.current &&
-                fabricRef.current.add(
-                  new fabric.Textbox("text", { left: 100, top: 100 })
-                );
+              const textbox = generateTextbox();
+
+              if (fabricRef.current) {
+                fabricRef.current.add(textbox);
+                fabricRef.current.setActiveObject(textbox);
+              }
             }}
             text="Text"
             extraClassnames="w-full"
