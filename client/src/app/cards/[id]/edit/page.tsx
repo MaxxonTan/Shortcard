@@ -36,26 +36,11 @@ export default function EditCardPage(params: { params: { id: string } }) {
 
   const fabricRef = useRef<Canvas | null>(null);
 
-  // Loads the first page on page load.
+  /**
+   * Loads the first page on page load.
+   */
   useEffect(() => {
-    // Get pages from db.
-    const fetchData = async () => {
-      const { data, error } = await supabase
-        .from("page")
-        .select()
-        .eq("card_id", params.params.id);
-
-      if (!error && data) {
-        cardStateDispatch({
-          type: "loadPage",
-          pages: data,
-        });
-
-        pages.current = data;
-      }
-    };
-
-    fetchData();
+    loadCard();
 
     cardStateDispatch({
       type: "loadPage",
@@ -63,7 +48,9 @@ export default function EditCardPage(params: { params: { id: string } }) {
     });
   }, []);
 
-  // Update the canvas everytime the page index changes.
+  /**
+   * Update the canvas everytime the page index changes.
+   */
   useEffect(() => {
     // Clear the canvas.
     fabricRef.current && fabricRef.current.dispose();
@@ -83,6 +70,8 @@ export default function EditCardPage(params: { params: { id: string } }) {
       backgroundColor: "white",
     });
 
+    fabricRef.current.on("selection:created", canvasObjectSelectionHandler);
+
     // If there is an existing canvas, load it up!
     if (cardState.pageJSONs[cardState.currentPageIndex]) {
       fabricRef.current.loadFromJSON(
@@ -92,6 +81,28 @@ export default function EditCardPage(params: { params: { id: string } }) {
     }
   }, [cardState.currentPageIndex, cardState.pageJSONs]);
 
+  /**
+   * Fetch all the pages for this card from the db
+   */
+  async function loadCard() {
+    const { data, error } = await supabase
+      .from("page")
+      .select()
+      .eq("card_id", params.params.id);
+
+    if (!error && data) {
+      cardStateDispatch({
+        type: "loadPage",
+        pages: data,
+      });
+
+      pages.current = data;
+    }
+  }
+
+  /**
+   * Save or delete cards for this card to the db
+   */
   async function saveCard() {
     const newCardState = cardEditReducer(cardState, {
       type: "changePage",
@@ -127,6 +138,15 @@ export default function EditCardPage(params: { params: { id: string } }) {
       .from("page")
       .upsert(pages.current)
       .select();
+  }
+
+  /**
+   * Handler for events fired from canvas object selection.
+   * Used for displaying object properties i.e. fonts, size, color, etc
+   * @param e The event object fired when user selects / unselects an object.
+   */
+  function canvasObjectSelectionHandler(e: fabric.IEvent<MouseEvent>) {
+    console.log(e);
   }
 
   return (
