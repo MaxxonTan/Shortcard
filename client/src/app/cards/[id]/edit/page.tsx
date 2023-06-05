@@ -1,16 +1,14 @@
 "use client";
 
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { fabric } from "fabric";
-import { Canvas } from "fabric/fabric-impl";
+import { Canvas, Textbox } from "fabric/fabric-impl";
 import TextField from "@/components/ui/textField";
 import Button from "@/components/ui/button";
 import {
   BsArrowLeftShort,
   BsArrowRightShort,
   BsInputCursorText,
-  BsLink45Deg,
-  BsMusicNoteBeamed,
   BsPlus,
 } from "react-icons/bs";
 import { MdDelete, MdOutlineInsertPhoto } from "react-icons/md";
@@ -20,6 +18,12 @@ import { Page } from "types/supabase";
 import { v4 as uuidv4 } from "uuid";
 import { cardEditReducer, initialCardEdit } from "./cardEditReducer";
 import { generateTextbox } from "@/utils/fabric/controls";
+import TextboxProperties from "./editProperties/textbox";
+
+/**
+ * The type of fabric.js objects that are supported in this app.
+ */
+type supportedObjectTypes = "textbox" | "image" | "video" | "none";
 
 export default function EditCardPage(params: { params: { id: string } }) {
   const { supabase } = useSupabase();
@@ -29,6 +33,9 @@ export default function EditCardPage(params: { params: { id: string } }) {
    * Note: The content of the pages are not updated until the user saves the page.
    */
   const pages = useRef<Page[]>([]);
+  const [selectedObject, setSelectedObject] = useState<fabric.Object>();
+  const [selectedObjectType, setSelectedObjectType] =
+    useState<supportedObjectTypes>("none");
   const [cardState, cardStateDispatch] = useReducer(
     cardEditReducer,
     initialCardEdit
@@ -146,7 +153,14 @@ export default function EditCardPage(params: { params: { id: string } }) {
    * @param e The event object fired when user selects / unselects an object.
    */
   function canvasObjectSelectionHandler(e: fabric.IEvent<MouseEvent>) {
-    console.log(e);
+    if (!e.selected) return;
+
+    switch (e.selected[0].type) {
+      case "textbox":
+        setSelectedObjectType("textbox");
+        setSelectedObject(e.selected[0]);
+        break;
+    }
   }
 
   return (
@@ -177,27 +191,14 @@ export default function EditCardPage(params: { params: { id: string } }) {
           <Button
             color="Secondary"
             onClick={() => {}}
-            text="Music"
-            extraClassnames="w-full"
-            leftIcon={<BsMusicNoteBeamed color="#F05123" size={24} />}
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            color="Secondary"
-            onClick={() => {}}
-            text="Link"
-            extraClassnames="w-full"
-            leftIcon={<BsLink45Deg color="#F05123" size={24} />}
-          />
-          <Button
-            color="Secondary"
-            onClick={() => {}}
             text="Media"
             extraClassnames="w-full"
             leftIcon={<MdOutlineInsertPhoto color="#F05123" size={24} />}
           />
         </div>
+        {selectedObjectType === "textbox" && fabricRef.current && (
+          <TextboxProperties canvas={fabricRef.current} />
+        )}
         <div className="flex items-center justify-center">
           <p className="text-lg">
             page {cardState.currentPageIndex + 1} / {cardState.pageJSONs.length}
