@@ -1,12 +1,12 @@
 `use client`;
 
 import { Canvas, Textbox } from "fabric/fabric-impl";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { HiChevronUpDown, HiCheck } from "react-icons/hi2";
 
 type TextboxPropertiesProp = {
-  canvas: Canvas;
+  textbox: Textbox;
 };
 
 const availableFontFamilies = [
@@ -16,23 +16,24 @@ const availableFontFamilies = [
   "Calibri",
 ];
 
-export default function TextboxProperties({ canvas }: TextboxPropertiesProp) {
-  const [selectedFont, setSelectedFont] = useState(
-    (canvas.getActiveObject() as Textbox).fontFamily ?? "Times New Roman"
-  );
-
-  function test() {}
+export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
+  const [selectedFont, setSelectedFont] = useState(availableFontFamilies[0]);
 
   function handleFontChange(newFont: string) {
     setSelectedFont(newFont);
 
-    const textbox = canvas.getActiveObject() as Textbox;
     textbox.fontFamily = newFont;
 
-    canvas.discardActiveObject().renderAll();
-    canvas.setActiveObject(textbox);
-    canvas.requestRenderAll();
+    if (textbox.canvas) {
+      textbox.canvas.discardActiveObject().renderAll();
+      textbox.canvas.setActiveObject(textbox);
+      textbox.canvas.requestRenderAll();
+    }
   }
+
+  useEffect(() => {
+    setSelectedFont(textbox.fontFamily ?? "Times New Roman");
+  }, [textbox]);
 
   return (
     // Code from https://headlessui.com/react/listbox.

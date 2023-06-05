@@ -78,6 +78,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
     });
 
     fabricRef.current.on("selection:created", canvasObjectSelectionHandler);
+    fabricRef.current.on("selection:updated", canvasObjectSelectionHandler);
 
     // If there is an existing canvas, load it up!
     if (cardState.pageJSONs[cardState.currentPageIndex]) {
@@ -196,8 +197,8 @@ export default function EditCardPage(params: { params: { id: string } }) {
             leftIcon={<MdOutlineInsertPhoto color="#F05123" size={24} />}
           />
         </div>
-        {selectedObjectType === "textbox" && fabricRef.current && (
-          <TextboxProperties canvas={fabricRef.current} />
+        {selectedObjectType === "textbox" && (
+          <TextboxProperties textbox={selectedObject as Textbox} />
         )}
         <div className="flex items-center justify-center">
           <p className="text-lg">
