@@ -215,7 +215,6 @@ export default function EditCardPage(params: { params: { id: string } }) {
               });
             }}
             rightIcon={<BsPlus size={24} />}
-            hasTransition={false}
             extraClassnames="mt-1"
             tooltip="Add Page"
           />
@@ -236,7 +235,6 @@ export default function EditCardPage(params: { params: { id: string } }) {
                 color={cardState.currentPageIndex === 0 ? "grey" : "black"}
               />
             }
-            hasTransition={false}
             horizontalPadding="px-2"
             tooltip="Previous Page"
             isDisabled={cardState.currentPageIndex === 0}
@@ -250,7 +248,6 @@ export default function EditCardPage(params: { params: { id: string } }) {
               });
             }}
             rightIcon={<MdDelete size={24} />}
-            hasTransition={false}
             horizontalPadding="px-2"
             tooltip="Delete Page"
             isDisabled={
@@ -262,7 +259,6 @@ export default function EditCardPage(params: { params: { id: string } }) {
             color="Transparent"
             onClick={saveCard}
             rightIcon={<HiOutlineSave size={24} />}
-            hasTransition={false}
             horizontalPadding="px-2"
             tooltip="Save Page"
           />
@@ -285,7 +281,6 @@ export default function EditCardPage(params: { params: { id: string } }) {
                 }
               />
             }
-            hasTransition={false}
             horizontalPadding="px-2"
             tooltip="Next Page"
             isDisabled={

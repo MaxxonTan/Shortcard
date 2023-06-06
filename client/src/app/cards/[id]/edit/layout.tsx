@@ -21,7 +21,6 @@ export default function EditCardLayout({
             router.back();
           }}
           leftIcon={<BiArrowBack size={38} />}
-          hasTransition={false}
           tooltip="New Card"
           horizontalPadding="0"
         />

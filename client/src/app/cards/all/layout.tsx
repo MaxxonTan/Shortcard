@@ -156,7 +156,6 @@ export default function AllCardsLayout({
             setIsCreateCardDialogOpen(true);
           }}
           leftIcon={<FiPlus size={iconSize} />}
-          hasTransition={false}
           tooltip="New Card"
         />
 
@@ -172,7 +171,6 @@ export default function AllCardsLayout({
           color="Transparent"
           onClick={handleSignOut}
           leftIcon={<MdExitToApp size={iconSize} />}
-          hasTransition={false}
         />
         <CustomDialog
           isOpen={isCreateCardDialogOpen}
@@ -215,7 +213,6 @@ export default function AllCardsLayout({
                     color="Primary"
                     text="Create Card"
                     onClick={() => {}}
-                    hasTransition={false}
                     extraClassnames="py-1 text-center mt-2 text-sm"
                     type="submit"
                   />
