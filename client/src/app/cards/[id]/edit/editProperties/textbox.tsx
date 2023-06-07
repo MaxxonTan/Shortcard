@@ -24,6 +24,7 @@ export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
   const [isBolded, setIsBolded] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderlined, setIsUnderlined] = useState(false);
+  const [fontSize, setFontSize] = useState(100);
 
   function handleFontChange(newFont: string) {
     setSelectedFont(newFont);
@@ -56,10 +57,23 @@ export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
       case "underlined":
         setIsUnderlined(!isUnderlined);
 
-        isUnderlined ? (textbox.underline = false) : (textbox.underline = true);
+        // textbox.underline = true doesn't work here for some reason.
+        isUnderlined
+          ? textbox.set("underline", false)
+          : textbox.set("underline", true);
         break;
     }
 
+    if (textbox.canvas) {
+      textbox.canvas.setActiveObject(textbox);
+      textbox.canvas.requestRenderAll();
+    }
+  }
+
+  function handleFontSizeChange(newFontSize: number) {
+    setFontSize(newFontSize);
+
+    textbox.fontSize = newFontSize;
     if (textbox.canvas) {
       textbox.canvas.setActiveObject(textbox);
       textbox.canvas.requestRenderAll();
@@ -72,13 +86,12 @@ export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
   useEffect(() => {
     setSelectedFont(textbox.fontFamily ?? "Times New Roman");
 
+    textbox.fontSize && setFontSize(textbox.fontSize);
     textbox?.fontWeight === "normal" ? setIsBolded(false) : setIsBolded(true);
     textbox?.fontStyle === "normal" ? setIsItalic(false) : setIsItalic(true);
     textbox?.underline === true
       ? setIsUnderlined(true)
       : setIsUnderlined(false);
-
-    console.log(textbox.underline);
   }, [textbox]);
 
   return (
@@ -156,8 +169,10 @@ export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
 
         <input
           type="number"
-          className="w-full rounded-md bg-secondary-dark px-2 outline-none ring-primary transition-all focus:ring-2"
+          className="w-full rounded-md bg-secondary-dark px-2 font-bold text-primary outline-none ring-neutral-black transition-all focus:ring-1"
           aria-label="Font Size"
+          value={fontSize}
+          onChange={(e) => handleFontSizeChange(e.currentTarget.valueAsNumber)}
           min={1}
           max={256}
         />
