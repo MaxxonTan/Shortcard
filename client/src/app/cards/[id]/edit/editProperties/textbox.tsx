@@ -25,6 +25,7 @@ export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderlined, setIsUnderlined] = useState(false);
   const [fontSize, setFontSize] = useState(100);
+  const [textColor, setTextColor] = useState("#000000");
 
   function handleFontChange(newFont: string) {
     setSelectedFont(newFont);
@@ -80,12 +81,23 @@ export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
     }
   }
 
+  function handleColorChange(newColor: string) {
+    setTextColor(newColor);
+
+    textbox.set("fill", newColor);
+    if (textbox.canvas) {
+      textbox.canvas.setActiveObject(textbox);
+      textbox.canvas.requestRenderAll();
+    }
+  }
+
   /**
    * Grab textbox properties every user selects a textbox
    */
   useEffect(() => {
     setSelectedFont(textbox.fontFamily ?? "Times New Roman");
 
+    textbox.fill && setTextColor(textbox.fill.toString());
     textbox.fontSize && setFontSize(textbox.fontSize);
     textbox?.fontWeight === "normal" ? setIsBolded(false) : setIsBolded(true);
     textbox?.fontStyle === "normal" ? setIsItalic(false) : setIsItalic(true);
@@ -151,6 +163,7 @@ export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
         </div>
       </Listbox>
       <div className="flex w-full gap-1">
+        {/* Text Formatting */}
         <Button
           color={isBolded ? "Primary" : "Secondary"}
           onClick={() => handleTextFormatting("bold")}
@@ -166,7 +179,22 @@ export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
           onClick={() => handleTextFormatting("underlined")}
           leftIcon={<GrUnderline />}
         />
+        {/* Text Color */}
+        <Button
+          color="Secondary"
+          onClick={() => {}}
+          horizontalPadding="px-1"
+          leftIcon={
+            <input
+              type="color"
+              className="rounded-md bg-secondary-dark"
+              value={textColor}
+              onChange={(e) => handleColorChange(e.target.value)}
+            />
+          }
+        />
 
+        {/* Font Size */}
         <input
           type="number"
           className="w-full rounded-md bg-secondary-dark px-2 font-bold text-primary outline-none ring-neutral-black transition-all focus:ring-1"
