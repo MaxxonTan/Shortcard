@@ -2,8 +2,9 @@ import { fabric } from "fabric";
 
 /**
  * Generates a textbox with custom control for deleting the object.
+ * @returns A Fabric.Textbox object.
  */
-export function generateTextbox() {
+export function generateTextboxObject() {
   const textbox = new fabric.Textbox("text", { left: 100, top: 100 });
   textbox.controls["deleteControl"] = new fabric.Control({
     x: 0.5,
@@ -35,6 +36,21 @@ export function generateTextbox() {
   });
 
   return textbox;
+}
+
+/**
+ * Generates a Fabric.Image object with custom controls.
+ * @param imageElement The HTML image element for the Fabric.Image object.
+ * @returns A Fabric.Image object.
+ */
+export function generateImageObject(imageElement: HTMLImageElement) {
+  const image = new fabric.Image(imageElement, {
+    centeredScaling: true,
+    scaleX: 0.1,
+    scaleY: 0.1,
+  });
+
+  return image;
 }
 
 const deleteIcon =

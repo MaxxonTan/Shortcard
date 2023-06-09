@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useReducer, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { Canvas, Textbox } from "fabric/fabric-impl";
 import TextField from "@/components/ui/textField";
@@ -17,7 +17,10 @@ import { useSupabase } from "@/components/supabase/supabaseProvider";
 import { Page } from "types/supabase";
 import { v4 as uuidv4 } from "uuid";
 import { cardEditReducer, initialCardEdit } from "./cardEditReducer";
-import { generateTextbox } from "@/utils/fabric/controls";
+import {
+  generateImageObject,
+  generateTextboxObject,
+} from "@/utils/fabric/controls";
 import TextboxProperties from "./editProperties/textbox";
 
 /**
@@ -164,6 +167,47 @@ export default function EditCardPage(params: { params: { id: string } }) {
     }
   }
 
+  /**
+   * Add a texbox to the canvas
+   */
+  function addTextbox() {
+    if (!fabricRef.current) return;
+
+    const textbox = generateTextboxObject();
+
+    fabricRef.current.add(textbox);
+    fabricRef.current.setActiveObject(textbox);
+  }
+
+  /**
+   * Adds a image to the canvas.
+   * @param e The event fired after user selects a photo from input.
+   */
+  function addImage(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+
+    // For each media the user uploads, generate a fabric object and add it to the canvas
+    files.forEach((file) => {
+      if (!fabricRef.current) return;
+
+      if (file.type.startsWith("image")) {
+        const imageURL = URL.createObjectURL(file);
+
+        const imageElement = document.createElement("img");
+        imageElement.src = imageURL;
+        imageElement.addEventListener("load", () => {
+          // Generate Image object with custom controls
+          const image = generateImageObject(imageElement);
+
+          if (!fabricRef.current) return;
+          fabricRef.current.add(image);
+          fabricRef.current.setActiveObject(image);
+          fabricRef.current.renderAll();
+        });
+      }
+    });
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-8">
       <div className="my-ayto mr-auto flex max-w-xs flex-1 flex-col gap-2">
@@ -177,29 +221,33 @@ export default function EditCardPage(params: { params: { id: string } }) {
         <div className="flex gap-2">
           <Button
             color="Secondary"
-            onClick={() => {
-              const textbox = generateTextbox();
-
-              if (fabricRef.current) {
-                fabricRef.current.add(textbox);
-                fabricRef.current.setActiveObject(textbox);
-              }
-            }}
+            onClick={addTextbox}
             text="Text"
             extraClassnames="w-full"
             leftIcon={<BsInputCursorText color="#F05123" size={24} />}
           />
           <Button
             color="Secondary"
-            onClick={() => {}}
-            text="Media"
+            onClick={() => {
+              document.getElementById("fileInput")?.click();
+            }}
+            text="Image"
             extraClassnames="w-full"
             leftIcon={<MdOutlineInsertPhoto color="#F05123" size={24} />}
+          />
+          <input
+            id="fileInput"
+            type="file"
+            className="hidden"
+            accept=".webp,.jpeg,.jpg,.png,.mp4"
+            multiple={false}
+            onChange={addImage}
           />
         </div>
         {selectedObjectType === "textbox" && (
           <TextboxProperties textbox={selectedObject as Textbox} />
         )}
+        {/* Page Number */}
         <div className="flex items-center justify-center">
           <p className="text-lg">
             page {cardState.currentPageIndex + 1} / {cardState.pageJSONs.length}
@@ -219,6 +267,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
             tooltip="Add Page"
           />
         </div>
+        {/* Page Controls */}
         <div className="flex items-center justify-center">
           <Button
             color="Transparent"
