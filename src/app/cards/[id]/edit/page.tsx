@@ -90,6 +90,15 @@ export default function EditCardPage(params: { params: { id: string } }) {
         fabricRef.current.renderAll.bind(fabricRef.current)
       );
     }
+
+    /**
+     * Hack to display custom controls on load without adding any textbox / image element.
+     * For some reason editing the fabric.object controls prototype does not work.
+     */
+    const image = generateImageObject(document.createElement("img"));
+    const textbox = generateTextboxObject();
+    fabricRef.current.add(image, textbox);
+    fabricRef.current.remove(image, textbox);
   }, [cardState.currentPageIndex, cardState.pageJSONs]);
 
   /**
