@@ -24,6 +24,7 @@ export default function TextField(props: TextFieldProp) {
         placeholder={props.placeholder}
         value={props.value}
         onChange={(e) => props.onValueChange(e.currentTarget.value)}
+        maxLength={50}
       />
       {props.errorMessage && (
         <p className="text-xs text-red-500">{props.errorMessage}</p>

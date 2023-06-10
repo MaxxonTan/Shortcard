@@ -102,21 +102,33 @@ export default function EditCardPage(params: { params: { id: string } }) {
   }, [cardState.currentPageIndex, cardState.pageJSONs]);
 
   /**
-   * Fetch all the pages for this card from the db
+   * Fetch all the pages and card info for this card from the db
    */
   async function loadCard() {
-    const { data, error } = await supabase
+    const { data: queriedCard, error: cardError } = await supabase
+      .from("card")
+      .select()
+      .eq("id", params.params.id);
+
+    if (!cardError && queriedCard) {
+      cardStateDispatch({
+        type: "loadCard",
+        card: queriedCard[0],
+      });
+    }
+
+    const { data: queriedPages, error: pageError } = await supabase
       .from("page")
       .select()
       .eq("card_id", params.params.id);
 
-    if (!error && data) {
+    if (!pageError && queriedPages) {
       cardStateDispatch({
         type: "loadPage",
-        pages: data,
+        pages: queriedPages,
       });
 
-      pages.current = data;
+      pages.current = queriedPages;
     }
   }
 
@@ -129,6 +141,15 @@ export default function EditCardPage(params: { params: { id: string } }) {
       currentPageJSON: JSON.stringify(fabricRef.current),
       toPageIndex: cardState.currentPageIndex,
     });
+
+    // Update opening message for card
+    if (newCardState.openingMessage)
+      await supabase
+        .from("card")
+        .update({
+          opening_message: newCardState.openingMessage,
+        })
+        .eq("id", params.params.id);
 
     // Compare the cardState to pages ref and UPSERT to Supabase.
     newCardState.pageJSONs.forEach((pageJSON, index) => {
@@ -149,15 +170,12 @@ export default function EditCardPage(params: { params: { id: string } }) {
       }
     });
 
-    // Remove any pages that is in the db but not locally (deleted pages).
+    // TODO: Remove any pages that is in the db but not locally (deleted pages).
     while (pages.current.length > cardState.pageJSONs.length) {
       pages.current.pop();
     }
 
-    const { data, error } = await supabase
-      .from("page")
-      .upsert(pages.current)
-      .select();
+    await supabase.from("page").upsert(pages.current).select();
   }
 
   /**
@@ -223,8 +241,13 @@ export default function EditCardPage(params: { params: { id: string } }) {
         <TextField
           label="Opening Message"
           placeholder="Enter opening message here..."
-          onValueChange={(val) => {}}
-          value=""
+          onValueChange={(val) => {
+            cardStateDispatch({
+              type: "updateOpeningMessage",
+              newOpeningMessage: val,
+            });
+          }}
+          value={cardState.openingMessage}
         />
         {/* TODO: Use Grid */}
         <div className="flex gap-2">

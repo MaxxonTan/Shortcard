@@ -1,9 +1,10 @@
-import { Page } from "types/supabase";
+import { Page, Card } from "types/supabase";
 
 export type CardEditState = {
   pageJSONs: string[];
   // Index of current page in pageJsons.
   currentPageIndex: number;
+  openingMessage: string;
 };
 
 type CardEditAction =
@@ -26,11 +27,14 @@ type CardEditAction =
       type: "deletePage";
       pageIndex: number;
     }
-  | { type: "loadPage"; pages: Page[] };
+  | { type: "loadPage"; pages: Page[] }
+  | { type: "loadCard"; card: Card }
+  | { type: "updateOpeningMessage"; newOpeningMessage: string };
 
 export const initialCardEdit: CardEditState = {
   pageJSONs: [""],
   currentPageIndex: -1,
+  openingMessage: "",
 };
 
 export function cardEditReducer(
@@ -85,6 +89,19 @@ export function cardEditReducer(
       if (result.pageJSONs.length === 0) result.pageJSONs = [""];
 
       result.currentPageIndex = 0;
+      return result;
+    }
+    case "loadCard": {
+      const result = { ...newCardState };
+
+      result.openingMessage = action.card.opening_message ?? "";
+
+      return result;
+    }
+    case "updateOpeningMessage": {
+      const result = { ...newCardState };
+      result.openingMessage = action.newOpeningMessage;
+
       return result;
     }
   }
