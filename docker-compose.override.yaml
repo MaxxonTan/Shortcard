@@ -1,8 +1,0 @@
-# Only run during development
-
-version: '3.9'
-
-services:
-  server:
-    volumes:
-      - C:\Users\Maxxon\Documents\code\Shortcard\server:/src
