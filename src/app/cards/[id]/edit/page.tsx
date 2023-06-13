@@ -10,6 +10,7 @@ import {
   BsArrowRightShort,
   BsInputCursorText,
   BsPlus,
+  BsPaintBucket,
 } from "react-icons/bs";
 import { MdDelete, MdOutlineInsertPhoto } from "react-icons/md";
 import { HiOutlineSave } from "react-icons/hi";
@@ -32,13 +33,19 @@ export default function EditCardPage(params: { params: { id: string } }) {
   const { supabase } = useSupabase();
 
   /**
-   * Store the pages that are retrieved from the db.
-   * Note: The content of the pages are not updated until the user saves the page.
+   * Store the pages that are retrieved from the db and is used again when saving local changes.
+   * This is checked against the pages in cardState reducer during save.
    */
   const pages = useRef<Page[]>([]);
+
+  /**
+   * Used to display the controls specific to the object type.
+   * Currently only support Textboxes.
+   */
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const [selectedObjectType, setSelectedObjectType] =
     useState<supportedObjectTypes>("none");
+  const [currentPageColor, setCurrentPageColor] = useState("#FFFFFF");
   const [cardState, cardStateDispatch] = useReducer(
     cardEditReducer,
     initialCardEdit
@@ -90,6 +97,10 @@ export default function EditCardPage(params: { params: { id: string } }) {
         fabricRef.current.renderAll.bind(fabricRef.current)
       );
     }
+
+    setCurrentPageColor(
+      fabricRef.current.backgroundColor?.toString() ?? "#FFFFFF"
+    );
 
     /**
      * Hack to display custom controls on load without adding any textbox / image element.
@@ -274,6 +285,35 @@ export default function EditCardPage(params: { params: { id: string } }) {
             accept=".webp,.jpeg,.jpg,.png,.mp4"
             multiple={false}
             onChange={addImage}
+          />
+          <Button
+            color="Secondary"
+            tooltip="Background Color"
+            onClick={() => {
+              document.getElementById("colorInput")?.click();
+            }}
+            leftIcon={
+              <>
+                <BsPaintBucket color="#F05123" size={24} />
+                <input
+                  id="colorInput"
+                  type="color"
+                  value={currentPageColor}
+                  onChange={(e) => {
+                    if (fabricRef.current) {
+                      fabricRef.current.setBackgroundColor(
+                        e.target.value,
+                        () => {
+                          setCurrentPageColor(e.target.value);
+                          fabricRef.current?.requestRenderAll();
+                        }
+                      );
+                    }
+                  }}
+                  className="invisible absolute"
+                />
+              </>
+            }
           />
         </div>
         {selectedObjectType === "textbox" && (
