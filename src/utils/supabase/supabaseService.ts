@@ -1,20 +1,21 @@
 import { CardEditState } from "@/app/cards/[id]/edit/cardEditReducer";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { error } from "console";
 import { Canvas } from "fabric/fabric-impl";
-import { Page } from "types/supabase";
+import { Card, Database, Page } from "types/supabase";
 import { v4 as uuidv4 } from "uuid";
 
 /**
  * Service class containing logic between cards and db
  */
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient<Database>;
 
   constructor(supabaseContext: SupabaseClient) {
     this.supabase = supabaseContext;
   }
 
-  public async saveCard(
+  public async updateCard(
     cardState: CardEditState,
     unsavedPages: Page[],
     cardId: string,
@@ -65,5 +66,31 @@ export class SupabaseService {
     await this.supabase.from("page").upsert(unsavedPages).select();
 
     return unsavedPages;
+  }
+
+  public async fetchCard(cardId: string): Promise<Card> {
+    const { data: queriedCard, error: cardError } = await this.supabase
+      .from("card")
+      .select()
+      .eq("id", cardId);
+
+    if (cardError || !queriedCard) {
+      return Promise.reject(cardError);
+    }
+
+    return queriedCard[0];
+  }
+
+  public async fetchPages(cardId: string): Promise<Page[]> {
+    const { data: queriedPages, error: pageError } = await this.supabase
+      .from("page")
+      .select()
+      .eq("card_id", cardId);
+
+    if (pageError || !queriedPages) {
+      return Promise.reject(pageError);
+    }
+
+    return queriedPages;
   }
 }

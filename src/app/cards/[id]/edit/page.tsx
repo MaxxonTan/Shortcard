@@ -124,24 +124,18 @@ export default function EditCardPage(params: { params: { id: string } }) {
    * Fetch all the pages and card info for this card from the db
    */
   async function loadCard() {
-    const { data: queriedCard, error: cardError } = await supabase
-      .from("card")
-      .select()
-      .eq("id", params.params.id);
+    const queriedCard = await supabaseService.fetchCard(params.params.id);
 
-    if (!cardError && queriedCard) {
+    if (queriedCard) {
       cardStateDispatch({
         type: "loadCard",
-        card: queriedCard[0],
+        card: queriedCard,
       });
     }
 
-    const { data: queriedPages, error: pageError } = await supabase
-      .from("page")
-      .select()
-      .eq("card_id", params.params.id);
+    const queriedPages = await supabaseService.fetchPages(params.params.id);
 
-    if (!pageError && queriedPages) {
+    if (queriedPages) {
       cardStateDispatch({
         type: "loadPage",
         pages: queriedPages,
@@ -162,7 +156,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
     });
 
     if (fabricRef.current)
-      await supabaseService.saveCard(
+      await supabaseService.updateCard(
         newCardState,
         pages.current,
         params.params.id,
