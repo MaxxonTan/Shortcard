@@ -3,8 +3,6 @@
 import { ChangeEvent, useEffect, useReducer, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { Canvas, Textbox } from "fabric/fabric-impl";
-import TextField from "@/components/ui/textField";
-import Button from "@/components/ui/button";
 import {
   BsArrowLeftShort,
   BsArrowRightShort,
@@ -14,15 +12,19 @@ import {
 } from "react-icons/bs";
 import { MdDelete, MdOutlineInsertPhoto } from "react-icons/md";
 import { HiOutlineSave } from "react-icons/hi";
+import Compressor from "compressorjs";
+
+import TextField from "@/components/ui/textField";
+import Button from "@/components/ui/button";
 import { useSupabase } from "@/components/supabase/supabaseProvider";
 import { Page } from "types/supabase";
-import { v4 as uuidv4 } from "uuid";
 import { cardEditReducer, initialCardEdit } from "./cardEditReducer";
 import {
   generateImageObject,
   generateTextboxObject,
 } from "@/utils/fabric/controls";
 import TextboxProperties from "./editProperties/textbox";
+import { SupabaseService } from "@/utils/supabase/supabaseService";
 
 /**
  * The type of fabric.js objects that are supported in this app.
@@ -31,6 +33,7 @@ type supportedObjectTypes = "textbox" | "image" | "video" | "none";
 
 export default function EditCardPage(params: { params: { id: string } }) {
   const { supabase } = useSupabase();
+  const supabaseService = new SupabaseService(supabase);
 
   /**
    * Store the pages that are retrieved from the db and is used again when saving local changes.
@@ -45,6 +48,11 @@ export default function EditCardPage(params: { params: { id: string } }) {
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const [selectedObjectType, setSelectedObjectType] =
     useState<supportedObjectTypes>("none");
+
+  /**
+   * Keeping a state of page background color because using setBackgroundColor() doesn't cause a re-render,
+   * which is needed to display updated value in the color input.
+   */
   const [currentPageColor, setCurrentPageColor] = useState("#FFFFFF");
   const [cardState, cardStateDispatch] = useReducer(
     cardEditReducer,
@@ -153,40 +161,13 @@ export default function EditCardPage(params: { params: { id: string } }) {
       toPageIndex: cardState.currentPageIndex,
     });
 
-    // Update opening message for card
-    if (newCardState.openingMessage)
-      await supabase
-        .from("card")
-        .update({
-          opening_message: newCardState.openingMessage,
-        })
-        .eq("id", params.params.id);
-
-    // Compare the cardState to pages ref and UPSERT to Supabase.
-    newCardState.pageJSONs.forEach((pageJSON, index) => {
-      // Find page id
-      const pageIndex = pages.current.findIndex((page) => {
-        return page.page_index === index;
-      });
-
-      if (pageIndex !== -1) {
-        pages.current[pageIndex].canvas_content = pageJSON;
-      } else {
-        pages.current.push({
-          canvas_content: pageJSON,
-          card_id: params.params.id,
-          id: uuidv4(),
-          page_index: index,
-        });
-      }
-    });
-
-    // TODO: Remove any pages that is in the db but not locally (deleted pages).
-    while (pages.current.length > cardState.pageJSONs.length) {
-      pages.current.pop();
-    }
-
-    await supabase.from("page").upsert(pages.current).select();
+    if (fabricRef.current)
+      await supabaseService.saveCard(
+        newCardState,
+        pages.current,
+        params.params.id,
+        fabricRef.current
+      );
   }
 
   /**
@@ -229,18 +210,30 @@ export default function EditCardPage(params: { params: { id: string } }) {
       if (!fabricRef.current) return;
 
       if (file.type.startsWith("image")) {
-        const imageURL = URL.createObjectURL(file);
+        // Compress image
+        new Compressor(file, {
+          quality: 0.5,
+          success(compressedImage) {
+            const imageURL = URL.createObjectURL(compressedImage);
 
-        const imageElement = document.createElement("img");
-        imageElement.src = imageURL;
-        imageElement.addEventListener("load", () => {
-          // Generate Image object with custom controls
-          const image = generateImageObject(imageElement);
+            const imageElement = document.createElement("img");
+            imageElement.src = imageURL;
+            imageElement.addEventListener("load", () => {
+              // Generate Image object with custom controls
+              const image = generateImageObject(imageElement);
 
-          if (!fabricRef.current) return;
-          fabricRef.current.add(image);
-          fabricRef.current.setActiveObject(image);
-          fabricRef.current.renderAll();
+              if (!fabricRef.current) return;
+              fabricRef.current.add(image);
+              fabricRef.current.setActiveObject(image);
+              fabricRef.current.renderAll();
+
+              cardStateDispatch({
+                type: "addImage",
+                fabricObject: image,
+                imageObject: compressedImage as File,
+              });
+            });
+          },
         });
       }
     });
@@ -285,6 +278,8 @@ export default function EditCardPage(params: { params: { id: string } }) {
             accept=".webp,.jpeg,.jpg,.png,.mp4"
             multiple={false}
             onChange={addImage}
+            // Reset value on click so that on change will always be triggered.
+            onClick={(e) => (e.currentTarget.value = "")}
           />
           <Button
             color="Secondary"
