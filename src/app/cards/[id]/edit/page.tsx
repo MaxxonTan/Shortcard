@@ -65,20 +65,46 @@ export default function EditCardPage(params: { params: { id: string } }) {
    * Loads the first page on page load.
    */
   useEffect(() => {
-    loadCard();
+    /**
+     * Fetch all the pages and card info for this card from the db
+     */
+    const loadCard = async () => {
+      const queriedCard = await supabaseService.fetchCard(params.params.id);
 
-    cardStateDispatch({
-      type: "loadPage",
-      pages: pages.current,
-    });
+      if (queriedCard) {
+        cardStateDispatch({
+          type: "loadCard",
+          card: queriedCard,
+        });
+      }
+
+      const queriedPages = await supabaseService.fetchPages(params.params.id);
+
+      if (queriedPages) {
+        cardStateDispatch({
+          type: "loadPage",
+          pages: queriedPages,
+        });
+
+        pages.current = queriedPages;
+      }
+
+      cardStateDispatch({
+        type: "loadPage",
+        pages: pages.current,
+      });
+    };
+
+    loadCard();
   }, []);
 
   /**
    * Update the canvas everytime the page index changes.
    */
   useEffect(() => {
-    // Clear the canvas.
-    fabricRef.current && fabricRef.current.dispose();
+    if (cardState.currentPageIndex === -1) return;
+    // Clears the page
+    fabricRef.current?.dispose();
 
     // Check whether it's the first or last page, if it is then the width for the new canvas should be different.
     let newCanvasWidth = 760;
@@ -149,19 +175,49 @@ export default function EditCardPage(params: { params: { id: string } }) {
    * Save or delete cards for this card to the db
    */
   async function saveCard() {
-    const newCardState = cardEditReducer(cardState, {
+    if (!fabricRef.current) return;
+
+    // Call change page to convert current page to JSON and save it to newCardState.
+    let newCardState = cardEditReducer(cardState, {
       type: "changePage",
       currentPageJSON: JSON.stringify(fabricRef.current),
       toPageIndex: cardState.currentPageIndex,
     });
 
-    if (fabricRef.current)
-      await supabaseService.updateCard(
-        newCardState,
-        pages.current,
+    if (newCardState.localImages.length > 0) {
+      await supabaseService.uploadImages(
+        newCardState.localImages,
         params.params.id,
-        fabricRef.current
+        async () => {
+          if (!fabricRef.current) return;
+
+          cardStateDispatch({ type: "clearLocalImages" });
+
+          // Call change page again because the source in image objects in the canvas have changed.
+          newCardState = cardEditReducer(cardState, {
+            type: "changePage",
+            currentPageJSON: JSON.stringify(fabricRef.current),
+            toPageIndex: cardState.currentPageIndex,
+          });
+
+          await supabaseService.updateCard(
+            newCardState,
+            pages.current,
+            params.params.id,
+            fabricRef.current
+          );
+        }
       );
+
+      return;
+    }
+
+    await supabaseService.updateCard(
+      newCardState,
+      pages.current,
+      params.params.id,
+      fabricRef.current
+    );
   }
 
   /**
@@ -177,6 +233,9 @@ export default function EditCardPage(params: { params: { id: string } }) {
         setSelectedObjectType("textbox");
         setSelectedObject(e.selected[0]);
         break;
+      case "image":
+        setSelectedObjectType("image");
+        setSelectedObject(e.selected[0]);
     }
   }
 

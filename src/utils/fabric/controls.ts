@@ -1,5 +1,4 @@
 import { fabric } from "fabric";
-import avatarImage from "../../../public/avatar.png";
 
 /**
  * Generates a textbox with custom control for deleting the object.

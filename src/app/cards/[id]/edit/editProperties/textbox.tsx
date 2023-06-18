@@ -25,7 +25,7 @@ export default function TextboxProperties({ textbox }: TextboxPropertiesProp) {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderlined, setIsUnderlined] = useState(false);
   const [fontSize, setFontSize] = useState(100);
-  const [textColor, setTextColor] = useState("#000000");
+  const [textColor, setTextColor] = useState("");
 
   function handleFontChange(newFont: string) {
     setSelectedFont(newFont);

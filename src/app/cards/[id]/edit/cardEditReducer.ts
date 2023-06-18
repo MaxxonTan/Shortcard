@@ -34,7 +34,8 @@ type CardEditAction =
   | { type: "loadPage"; pages: Page[] }
   | { type: "loadCard"; card: Card }
   | { type: "updateOpeningMessage"; newOpeningMessage: string }
-  | { type: "addImage"; fabricObject: fabric.Image; imageObject: File };
+  | { type: "addImage"; fabricObject: fabric.Image; imageObject: File }
+  | { type: "clearLocalImages" };
 
 export const initialCardEdit: CardEditState = {
   pageJSONs: [""],
@@ -120,6 +121,13 @@ export function cardEditReducer(
           imageObject: action.imageObject,
         },
       ];
+
+      return result;
+    }
+    case "clearLocalImages": {
+      const result = { ...newCardState };
+
+      result.localImages = [];
 
       return result;
     }

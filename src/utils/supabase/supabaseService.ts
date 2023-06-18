@@ -1,7 +1,7 @@
 import { CardEditState } from "@/app/cards/[id]/edit/cardEditReducer";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { error } from "console";
-import { Canvas } from "fabric/fabric-impl";
+import { Canvas, Image } from "fabric/fabric-impl";
 import { Card, Database, Page } from "types/supabase";
 import { v4 as uuidv4 } from "uuid";
 
@@ -30,15 +30,6 @@ export class SupabaseService {
         })
         .eq("id", cardId);
 
-    cardState.localImages.forEach((localImage) => {
-      // Upload images.
-      // Replace images in canvas with uploaded images.
-    });
-
-    currentPageCanvas.requestRenderAll();
-
-    console.log(currentPageCanvas.getObjects("image"));
-
     // Compare the cardState to pages ref and UPSERT to Supabase.
     cardState.pageJSONs.forEach((pageJSON, index) => {
       // Find page id
@@ -65,7 +56,46 @@ export class SupabaseService {
 
     await this.supabase.from("page").upsert(unsavedPages).select();
 
+    currentPageCanvas.requestRenderAll();
+
     return unsavedPages;
+  }
+
+  public async uploadImages(
+    images: {
+      fabricObject: Image;
+      imageObject: File;
+    }[],
+    cardId: string,
+    onImageLoad: () => void
+  ) {
+    const {
+      data: { user },
+      error: userError,
+    } = await this.supabase.auth.getUser();
+
+    images.forEach(async (localImage, index) => {
+      // Upload images.
+      const { data, error } = await this.supabase.storage
+        .from("cards")
+        .upload(
+          `public/${user?.id}/${cardId}/${localImage.imageObject.name}`,
+          localImage.imageObject,
+          { upsert: true }
+        );
+
+      if (data) {
+        const {
+          data: { publicUrl },
+        } = this.supabase.storage.from("cards").getPublicUrl(data?.path);
+
+        // Replace images in canvas with uploaded images.
+        localImage.fabricObject.setSrc(
+          publicUrl,
+          index === images.length - 1 ? onImageLoad : undefined
+        );
+      }
+    });
   }
 
   public async fetchCard(cardId: string): Promise<Card> {
