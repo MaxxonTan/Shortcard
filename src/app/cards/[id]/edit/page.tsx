@@ -18,7 +18,11 @@ import TextField from "@/components/ui/textField";
 import Button from "@/components/ui/button";
 import { useSupabase } from "@/components/supabase/supabaseProvider";
 import { Page } from "types/supabase";
-import { cardEditReducer, initialCardEdit } from "./cardEditReducer";
+import {
+  cardEditReducer,
+  CardEditState,
+  initialCardEdit,
+} from "./cardEditReducer";
 import {
   generateImageObject,
   generateTextboxObject,
@@ -103,8 +107,6 @@ export default function EditCardPage(params: { params: { id: string } }) {
    */
   useEffect(() => {
     if (cardState.currentPageIndex === -1) return;
-    // Clears the page
-    fabricRef.current?.dispose();
 
     // Check whether it's the first or last page, if it is then the width for the new canvas should be different.
     let newCanvasWidth = 760;
@@ -144,32 +146,11 @@ export default function EditCardPage(params: { params: { id: string } }) {
     const textbox = generateTextboxObject();
     fabricRef.current.add(image, textbox);
     fabricRef.current.remove(image, textbox);
-  }, [cardState.currentPageIndex, cardState.pageJSONs]);
 
-  /**
-   * Fetch all the pages and card info for this card from the db
-   */
-  async function loadCard() {
-    const queriedCard = await supabaseService.fetchCard(params.params.id);
-
-    if (queriedCard) {
-      cardStateDispatch({
-        type: "loadCard",
-        card: queriedCard,
-      });
-    }
-
-    const queriedPages = await supabaseService.fetchPages(params.params.id);
-
-    if (queriedPages) {
-      cardStateDispatch({
-        type: "loadPage",
-        pages: queriedPages,
-      });
-
-      pages.current = queriedPages;
-    }
-  }
+    return () => {
+      fabricRef.current?.dispose();
+    };
+  }, [cardState.currentPageIndex]);
 
   /**
    * Save or delete cards for this card to the db
