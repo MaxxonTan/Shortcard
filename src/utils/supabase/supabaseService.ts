@@ -75,6 +75,9 @@ export class SupabaseService {
     } = await this.supabase.auth.getUser();
 
     images.forEach(async (localImage, index) => {
+      // If local image has been deleted from canvas before saving
+      if (!localImage.fabricObject.canvas) return;
+
       // Upload images.
       const { data, error } = await this.supabase.storage
         .from("cards")
