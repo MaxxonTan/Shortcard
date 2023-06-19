@@ -29,6 +29,9 @@ import {
 } from "@/utils/fabric/controls";
 import TextboxProperties from "./editProperties/textbox";
 import { SupabaseService } from "@/utils/supabase/supabaseService";
+import { CircleLoader } from "react-spinners";
+import RotateLoader from "react-spinners/RotateLoader";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 /**
  * The type of fabric.js objects that are supported in this app.
@@ -64,11 +67,14 @@ export default function EditCardPage(params: { params: { id: string } }) {
   );
 
   const fabricRef = useRef<Canvas | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   /**
    * Loads the first page on page load.
    */
   useEffect(() => {
+    setIsLoading(true);
+
     /**
      * Fetch all the pages and card info for this card from the db
      */
@@ -97,6 +103,8 @@ export default function EditCardPage(params: { params: { id: string } }) {
         type: "loadPage",
         pages: pages.current,
       });
+
+      setIsLoading(false);
     };
 
     loadCard();
@@ -158,6 +166,8 @@ export default function EditCardPage(params: { params: { id: string } }) {
   async function saveCard() {
     if (!fabricRef.current) return;
 
+    setIsLoading(true);
+
     // Call change page to convert current page to JSON and save it to newCardState.
     let newCardState = cardEditReducer(cardState, {
       type: "changePage",
@@ -187,6 +197,8 @@ export default function EditCardPage(params: { params: { id: string } }) {
             params.params.id,
             fabricRef.current
           );
+
+          setIsLoading(false);
         }
       );
 
@@ -199,6 +211,8 @@ export default function EditCardPage(params: { params: { id: string } }) {
       params.params.id,
       fabricRef.current
     );
+
+    setIsLoading(false);
   }
 
   /**
@@ -408,7 +422,18 @@ export default function EditCardPage(params: { params: { id: string } }) {
           <Button
             color="Transparent"
             onClick={saveCard}
-            rightIcon={<HiOutlineSave size={24} />}
+            rightIcon={
+              isLoading ? (
+                <ScaleLoader
+                  className="text-primary"
+                  width={2}
+                  height={16}
+                  color="#F05123"
+                />
+              ) : (
+                <HiOutlineSave size={24} />
+              )
+            }
             horizontalPadding="px-2"
             tooltip="Save Page"
           />
