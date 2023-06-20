@@ -5,9 +5,12 @@ type CustomDialogProp = {
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
   title: string;
-  content: React.ReactNode;
+  children: React.ReactNode;
 };
 
+/**
+ * Wrapper for HeadlessUI's dialog component.
+ */
 export default function CustomDialog(props: CustomDialogProp) {
   return (
     /**
@@ -45,7 +48,7 @@ export default function CustomDialog(props: CustomDialogProp) {
                 >
                   {props.title}
                 </Dialog.Title>
-                <div className="mt-4">{props.content}</div>
+                <div className="mt-4">{props.children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
