@@ -18,19 +18,13 @@ import TextField from "@/components/ui/textField";
 import Button from "@/components/ui/button";
 import { useSupabase } from "@/components/supabase/supabaseProvider";
 import { Page } from "types/supabase";
-import {
-  cardEditReducer,
-  CardEditState,
-  initialCardEdit,
-} from "./cardEditReducer";
+import { cardEditReducer, initialCardEdit } from "./cardEditReducer";
 import {
   generateImageObject,
   generateTextboxObject,
 } from "@/utils/fabric/controls";
 import TextboxProperties from "./editProperties/textbox";
 import { SupabaseService } from "@/utils/supabase/supabaseService";
-import { CircleLoader } from "react-spinners";
-import RotateLoader from "react-spinners/RotateLoader";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 /**

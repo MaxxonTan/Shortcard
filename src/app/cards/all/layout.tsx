@@ -176,52 +176,51 @@ export default function AllCardsLayout({
           isOpen={isCreateCardDialogOpen}
           setOpen={(isOpen) => setIsCreateCardDialogOpen(isOpen)}
           title="Create Card"
-          content={
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                createCard();
-              }}
-            >
-              <div className="flex flex-col gap-2">
-                <TextField
-                  label="From"
-                  required
-                  placeholder="Who is this from?"
-                  value={newCardState.card.from ?? ""}
-                  onValueChange={(e) => {
-                    newCardDispatch({ type: "updateFrom", from: e });
-                  }}
+        >
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              createCard();
+            }}
+          >
+            <div className="flex flex-col gap-2">
+              <TextField
+                label="From"
+                required
+                placeholder="Who is this from?"
+                value={newCardState.card.from ?? ""}
+                onValueChange={(e) => {
+                  newCardDispatch({ type: "updateFrom", from: e });
+                }}
+              />
+              <TextField
+                label="To"
+                required
+                placeholder="Who is this for?"
+                value={newCardState.card.to ?? ""}
+                onValueChange={(e) => {
+                  newCardDispatch({ type: "updateTo", to: e });
+                }}
+              />
+              {newCardState.isLoading ? (
+                <BarLoader
+                  color="#F05123"
+                  className="mx-auto mt-2"
+                  width="100%"
                 />
-                <TextField
-                  label="To"
-                  required
-                  placeholder="Who is this for?"
-                  value={newCardState.card.to ?? ""}
-                  onValueChange={(e) => {
-                    newCardDispatch({ type: "updateTo", to: e });
-                  }}
+              ) : (
+                <Button
+                  color="Primary"
+                  text="Create Card"
+                  onClick={() => {}}
+                  extraClassnames="py-1 text-center mt-2 text-sm"
+                  type="submit"
                 />
-                {newCardState.isLoading ? (
-                  <BarLoader
-                    color="#F05123"
-                    className="mx-auto mt-2"
-                    width="100%"
-                  />
-                ) : (
-                  <Button
-                    color="Primary"
-                    text="Create Card"
-                    onClick={() => {}}
-                    extraClassnames="py-1 text-center mt-2 text-sm"
-                    type="submit"
-                  />
-                )}
-                {newCardState.error && <p>{newCardState.error}</p>}
-              </div>
-            </form>
-          }
-        />
+              )}
+              {newCardState.error && <p>{newCardState.error}</p>}
+            </div>
+          </form>
+        </CustomDialog>
       </header>
       <main className="mt-8">{children}</main>
     </>
