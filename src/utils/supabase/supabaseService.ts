@@ -6,7 +6,9 @@ import { Card, Database, Page } from "types/supabase";
 import { v4 as uuidv4 } from "uuid";
 
 /**
- * Service class containing logic between cards and db
+ * Service class containing logic between cards and db.
+ * In a weird state right now since only used by the card edit page.
+ * Refer to supabaseProvider.tsx for possible refactor.
  */
 export class SupabaseService {
   private supabase: SupabaseClient<Database>;

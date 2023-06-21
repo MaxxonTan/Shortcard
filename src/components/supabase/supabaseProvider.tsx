@@ -36,6 +36,11 @@ export default function SupabaseProvider({
 }
 
 export const useSupabase = () => {
+  /**
+   * Maybe we could return a SupabaseService instance instead?
+   * Doing so can hide all the implementation of all the app-specific use case
+   * the provided supabase client.
+   */
   let supabaseContext = useContext(SupabaseContext);
   if (supabaseContext === undefined) {
     throw new Error(

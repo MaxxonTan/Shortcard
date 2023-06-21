@@ -11,16 +11,12 @@ import { useSupabase } from "../supabase/supabaseProvider";
 
 type CardItemProp = {
   card: Card;
+  onCardDelete: (cardId: string) => void;
 };
 
 export default function CardItem(props: CardItemProp) {
-  const { supabase } = useSupabase();
-  const supabaseService = new SupabaseService(supabase);
-
   const card = props.card;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
-  async function deleteCard() {}
 
   return (
     <Link
@@ -56,7 +52,15 @@ export default function CardItem(props: CardItemProp) {
               }}
               text="Cancel"
             />
-            <Button color="Primary" onClick={() => {}} text="Confirm" />
+            <Button
+              color="Primary"
+              onClick={() => {
+                props.onCardDelete(card.id);
+
+                setShowDeleteDialog(false);
+              }}
+              text="Confirm"
+            />
           </div>
         </div>
       </CustomDialog>
