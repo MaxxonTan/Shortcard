@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 import CardItem from "@/components/ui/cardItem";
 import { Card } from "types/supabase";
 import { useSupabase } from "@/components/supabase/supabaseProvider";
+import { BarLoader } from "react-spinners";
 
 export default function CardsPage() {
   const { supabase } = useSupabase();
 
   const [cards, setCards] = useState<Card[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function getCards() {
@@ -23,10 +25,14 @@ export default function CardsPage() {
           .select()
           .eq("user_id", user.id);
 
-        if (cards) setCards(cards);
+        if (cards) {
+          setCards(cards);
+          setIsLoading(false);
+        }
       }
     }
 
+    setIsLoading(true);
     getCards();
   }, []);
 
@@ -44,6 +50,9 @@ export default function CardsPage() {
 
   return (
     <main className="flex flex-wrap gap-8">
+      {isLoading && (
+        <BarLoader color="#F05123" className="mx-auto mt-2" width="100%" />
+      )}
       {cards &&
         cards.map((card) => {
           return (

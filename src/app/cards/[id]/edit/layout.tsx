@@ -13,7 +13,7 @@ export default function EditCardLayout({
   const router = useRouter();
 
   return (
-    <>
+    <div className="h-screen px-6 py-8 sm:px-10">
       <header className="flex items-center gap-3">
         <Button
           color="Transparent"
@@ -33,7 +33,7 @@ export default function EditCardLayout({
           rightIcon={<FaShare size={24} />}
         />
       </header>
-      <main className="mt-8 h-full">{children}</main>
-    </>
+      <main className="mt-8 ">{children}</main>
+    </div>
   );
 }

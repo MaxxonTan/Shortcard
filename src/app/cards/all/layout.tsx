@@ -13,7 +13,7 @@ import CustomDialog from "@/components/ui/customDialog";
 import TextField from "@/components/ui/textField";
 import { InsertCard, InsertPage } from "types/supabase";
 import { User } from "@supabase/supabase-js";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import BarLoader from "react-spinners/BarLoader";
 
 type newCardState = {
@@ -141,7 +141,7 @@ export default function AllCardsLayout({
   };
 
   return (
-    <>
+    <div className="h-screen px-6 py-8 sm:px-10">
       <header className="flex items-center">
         {/* Hacky styling with negative top margin here, caused by h1 doesn't align vertically */}
         <Link
@@ -223,6 +223,6 @@ export default function AllCardsLayout({
         </CustomDialog>
       </header>
       <main className="mt-8">{children}</main>
-    </>
+    </div>
   );
 }

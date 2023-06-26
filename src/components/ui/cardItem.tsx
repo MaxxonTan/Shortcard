@@ -22,7 +22,6 @@ export default function CardItem(props: CardItemProp) {
     <Link
       href={`/cards/${card.id}/edit`}
       className="group relative flex cursor-pointer flex-col gap-2"
-      onClick={(e) => e.preventDefault()}
     >
       <MdDelete
         // Can't change visiblity here because you can't hover over "hidden"
@@ -30,6 +29,9 @@ export default function CardItem(props: CardItemProp) {
         size={24}
         onClick={(e) => {
           setShowDeleteDialog(true);
+
+          e.stopPropagation();
+          e.nativeEvent.preventDefault();
         }}
       />
       <div className="h-56 w-56 rounded-md bg-primary ring-neutral-black transition-all group-hover:ring-2" />
