@@ -15,6 +15,14 @@ export default function CardContainer({ pages }: CardContainerProp) {
   const fabricRef = useRef<StaticCanvas | null>(null);
   const [pageIndex, setPageIndex] = useState(0);
 
+  /**
+   * Add Listeners for arrow click
+   */
+  window.addEventListener("keydown", handleKeyBoardEvent);
+
+  /**
+   * Listen to page changes
+   */
   useEffect(() => {
     const currentPage = pages.find((page) => page.page_index === pageIndex);
     if (!currentPage) return;
@@ -33,13 +41,23 @@ export default function CardContainer({ pages }: CardContainerProp) {
       currentPage.canvas_content?.toString(),
       () => {
         fabricRef.current?.renderAll();
+
+        // TODO: Add spinner
         console.log("Complete!");
       }
     );
   }, [pageIndex]);
 
+  function handleKeyBoardEvent(e: KeyboardEvent) {
+    if (e.code === "ArrowRight" && pageIndex !== pages.length - 1) {
+      setPageIndex(pageIndex + 1);
+    } else if (e.code === "ArrowLeft" && pageIndex !== 0) {
+      setPageIndex(pageIndex - 1);
+    }
+  }
+
   return (
-    <div className="my-auto flex h-full flex-wrap items-center justify-center gap-4 px-1">
+    <div className="flex h-full flex-col flex-wrap items-center justify-center gap-4 px-1 lg:flex-row">
       <Button
         color="Transparent"
         onClick={() => {
@@ -53,6 +71,7 @@ export default function CardContainer({ pages }: CardContainerProp) {
           />
         }
         isDisabled={pageIndex === 0}
+        extraClassnames="hidden lg:block"
       />
       <div className="overflow-x-auto rounded-md ring-2 ring-neutral-black">
         <canvas
@@ -64,21 +83,37 @@ export default function CardContainer({ pages }: CardContainerProp) {
           }]`}
         />
       </div>
-
-      <Button
-        color="Transparent"
-        onClick={() => {
-          setPageIndex(pageIndex + 1);
-        }}
-        horizontalPadding="p-0"
-        leftIcon={
-          <BsArrowRightShort
-            size={48}
-            color={pageIndex === pages.length - 1 ? "grey" : "#F05123"}
-          />
-        }
-        isDisabled={pageIndex === pages.length - 1}
-      />
+      <div className="flex w-full justify-center gap-4 lg:w-auto">
+        <Button
+          color="Transparent"
+          onClick={() => {
+            setPageIndex(pageIndex - 1);
+          }}
+          horizontalPadding="p-0"
+          leftIcon={
+            <BsArrowLeftShort
+              size={48}
+              color={pageIndex === 0 ? "grey" : "#F05123"}
+            />
+          }
+          isDisabled={pageIndex === 0}
+          extraClassnames="lg:hidden"
+        />
+        <Button
+          color="Transparent"
+          onClick={() => {
+            setPageIndex(pageIndex + 1);
+          }}
+          horizontalPadding="p-0"
+          leftIcon={
+            <BsArrowRightShort
+              size={48}
+              color={pageIndex === pages.length - 1 ? "grey" : "#F05123"}
+            />
+          }
+          isDisabled={pageIndex === pages.length - 1}
+        />
+      </div>
     </div>
   );
 }
