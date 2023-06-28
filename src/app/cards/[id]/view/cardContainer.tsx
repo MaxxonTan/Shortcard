@@ -59,7 +59,7 @@ export default function CardContainer({ pages }: CardContainerProp) {
   }
 
   return (
-    <div className="flex h-full flex-col items-stretch justify-center gap-4 px-1 md:items-center lg:flex-row">
+    <div className="relative flex h-full flex-col flex-wrap items-center justify-center gap-4 px-1 lg:flex-row">
       <Button
         color="Transparent"
         onClick={() => {
@@ -75,7 +75,7 @@ export default function CardContainer({ pages }: CardContainerProp) {
         isDisabled={pageIndex === 0}
         extraClassnames="hidden lg:block"
       />
-      <div className="overflow-x-auto rounded-md ring-2 ring-neutral-black">
+      <div className="max-w-full overflow-x-auto rounded-md ring-2 ring-neutral-black">
         <canvas
           id="view-canvas"
           className={`min-w-[${
@@ -115,6 +115,11 @@ export default function CardContainer({ pages }: CardContainerProp) {
           }
           isDisabled={pageIndex === pages.length - 1}
         />
+      </div>
+      <div className="absolute bottom-5 rounded-full bg-primary px-5 py-1">
+        <h1 className="text-center text-lg text-white">
+          {pageIndex + 1} / {pages.length}
+        </h1>
       </div>
     </div>
   );
