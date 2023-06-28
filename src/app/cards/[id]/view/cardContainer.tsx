@@ -18,7 +18,9 @@ export default function CardContainer({ pages }: CardContainerProp) {
   /**
    * Add Listeners for arrow click
    */
-  window.addEventListener("keydown", handleKeyBoardEvent);
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyBoardEvent);
+  });
 
   /**
    * Listen to page changes
@@ -57,7 +59,7 @@ export default function CardContainer({ pages }: CardContainerProp) {
   }
 
   return (
-    <div className="flex h-full flex-col flex-wrap items-center justify-center gap-4 px-1 lg:flex-row">
+    <div className="flex h-full flex-col items-stretch justify-center gap-4 px-1 md:items-center lg:flex-row">
       <Button
         color="Transparent"
         onClick={() => {
