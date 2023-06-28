@@ -116,7 +116,7 @@ export default function CardContainer({ pages }: CardContainerProp) {
           isDisabled={pageIndex === pages.length - 1}
         />
       </div>
-      <div className="absolute bottom-5 rounded-full bg-primary px-5 py-1">
+      <div className="absolute bottom-0 w-full bg-primary px-5 py-3 md:bottom-5 md:w-auto md:rounded-full md:py-1">
         <h1 className="text-center text-lg text-white">
           {pageIndex + 1} / {pages.length}
         </h1>
