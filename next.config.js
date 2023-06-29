@@ -2,9 +2,7 @@
 const nextConfig = {
   experimental: {
     appDir: true,
-    outputFileTracingExcludes: {
-      "*": ["node_modules/canvas"],
-    },
+    // Added because 50mb serverless function limit is exceeded on vercel.
     outputFileTracingIgnores: ["**canvas**"],
   },
   images: {

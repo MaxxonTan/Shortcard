@@ -2,8 +2,8 @@
 
 import Button from "@/components/ui/button";
 import CustomDialog from "@/components/ui/customDialog";
-import { usePathname, useRouter } from "next/navigation";
-import { BiArrowBack } from "react-icons/bi";
+import { useRouter } from "next/navigation";
+import { BiArrowBack, BiCopy } from "react-icons/bi";
 import { FaShare } from "react-icons/fa";
 import { useState } from "react";
 
@@ -17,7 +17,10 @@ export default function EditCardLayout({
   };
 }) {
   const router = useRouter();
-  const pathname = usePathname();
+  const basePath =
+    process.env.NODE_ENV === "production"
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
 
   const [openShareDialog, setOpenShareDialog] = useState(false);
 
@@ -48,15 +51,29 @@ export default function EditCardLayout({
           setOpen={(isOpen) => setOpenShareDialog(isOpen)}
           title="Share Card"
         >
-          <p className="text-sm text-gray-500">
+          <div className="flex gap-2">
+            <p className="truncate rounded-sm px-3 py-2 font-semibold text-neutral-black ring-2 ring-black">
+              {`${basePath}/cards/${params.id}/view`}
+            </p>
+            <Button
+              color="Primary"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `${basePath}/cards/${params.id}/view`
+                );
+              }}
+              leftIcon={<BiCopy />}
+              extraClassnames="h-full"
+              horizontalPadding="py-3 px-3"
+              tooltip="Copy Link"
+            />
+          </div>
+          <p className="mt-4 text-center text-sm text-gray-500">
             Anyone with this link can see your card.
           </p>
-          <div>
-            <p>{pathname}</p>
-          </div>
         </CustomDialog>
       </header>
-      <main className="mt-8 ">{children}</main>
+      <main className="mt-8">{children}</main>
     </div>
   );
 }

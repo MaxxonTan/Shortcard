@@ -11,6 +11,12 @@ export default function HomePage() {
   const handleGoogleLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: {
+        redirectTo:
+          process.env.NODE_ENV === "development"
+            ? "http://localhost:3000/cards/all/"
+            : "https://shortcard.vercel.app/cards/all/",
+      },
     });
   };
 
