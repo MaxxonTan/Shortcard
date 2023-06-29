@@ -120,6 +120,7 @@ export default function CardContainer({ pages }: CardContainerProp) {
         <h1 className="text-center text-lg text-white">
           {pageIndex + 1} / {pages.length}
         </h1>
+        //TODO: Add loader when image is loading
       </div>
     </div>
   );
