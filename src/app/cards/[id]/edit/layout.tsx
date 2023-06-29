@@ -19,8 +19,8 @@ export default function EditCardLayout({
   const router = useRouter();
   const basePath =
     process.env.NODE_ENV === "production"
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000";
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+      : `http://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
 
   const [openShareDialog, setOpenShareDialog] = useState(false);
 
