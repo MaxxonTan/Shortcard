@@ -2,6 +2,9 @@
 const nextConfig = {
   experimental: {
     appDir: true,
+    outputFileTracingExcludes: {
+      "*": ["node_modules/canvas"],
+    },
   },
   images: {
     remotePatterns: [{ hostname: "lh3.googleusercontent.com" }],
@@ -11,9 +14,6 @@ const nextConfig = {
       canvas: "commonjs canvas",
     });
     return config;
-  },
-  outputFileTracingExcludes: {
-    "*": ["node_modules/canvas"],
   },
 };
 
