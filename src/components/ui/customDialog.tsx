@@ -14,7 +14,7 @@ type CustomDialogProp = {
 export default function CustomDialog(props: CustomDialogProp) {
   return (
     /**
-     * Boilerplate code from HeadlessUI. https://headlessui.com/react/dialog
+     * Code from HeadlessUI. https://headlessui.com/react/dialog
      */
     <Transition appear show={props.isOpen} as={Fragment}>
       <Dialog as="div" onClose={() => props.setOpen(false)}>

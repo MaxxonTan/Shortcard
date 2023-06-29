@@ -12,6 +12,9 @@ const nextConfig = {
     });
     return config;
   },
+  outputFileTracingExcludes: {
+    "*": ["node_modules/canvas"],
+  },
 };
 
 module.exports = nextConfig;
