@@ -5,6 +5,7 @@ const nextConfig = {
     outputFileTracingExcludes: {
       "*": ["node_modules/canvas"],
     },
+    outputFileTracingIgnores: ["**canvas**"],
   },
   images: {
     remotePatterns: [{ hostname: "lh3.googleusercontent.com" }],
