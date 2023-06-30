@@ -282,8 +282,8 @@ export default function EditCardPage(params: { params: { id: string } }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-8">
-      <div className="my-ayto mr-auto flex max-w-xs flex-1 flex-col gap-2">
+    <div className="flex flex-wrap items-center justify-center gap-8">
+      <div className="flex max-w-md flex-1 flex-col gap-2 md:mr-auto md:max-w-xs">
         <TextField
           label="Opening Message"
           placeholder="Enter opening message here..."
