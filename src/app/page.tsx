@@ -22,7 +22,12 @@ export default function HomePage() {
 
   return (
     <main className="mx-auto flex h-screen flex-col items-center justify-center ">
-      <Image src={birthdayCardImage} alt="Birthday Card Icon" priority />
+      <Image
+        src={birthdayCardImage}
+        alt="Birthday Card Icon"
+        priority
+        className="w-64 sm:w-auto"
+      />
 
       <h1 className="mb-4 text-center font-serif text-2xl font-bold">
         Generate birthday cards.
