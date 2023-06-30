@@ -2,6 +2,7 @@ import { CardEditState } from "@/app/cards/[id]/edit/cardEditReducer";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { error } from "console";
 import { Canvas, Image } from "fabric/fabric-impl";
+import { cache } from "react";
 import { Card, Database, Page } from "types/supabase";
 import { v4 as uuidv4 } from "uuid";
 
@@ -17,6 +18,14 @@ export class SupabaseService {
     this.supabase = supabaseContext;
   }
 
+  /**
+   * Updates "pages" table by comparing pages between cardState and unsavedPages.
+   * Also deletes pages that are not in cardState but in unsavedPages from the DB.
+   * @param cardState The current card state from the cardEditReducer.
+   * @param unsavedPages Array of local Page objects that are not updated with latest changes.
+   * @param cardId The card id.
+   * @param currentPageCanvas The canvas object.
+   */
   public async updateCard(
     cardState: CardEditState,
     unsavedPages: Page[],
@@ -63,6 +72,12 @@ export class SupabaseService {
     return unsavedPages;
   }
 
+  /**
+   * Uploads an array of images to Supabase Storage.
+   * @param images An array of images object containing the fabric object and the File object.
+   * @param cardId The id of the card containing the images.
+   * @param onImageLoad The callback function after the uploaded images are loaded back into the canvas.
+   */
   public async uploadImages(
     images: {
       fabricObject: Image;
@@ -95,6 +110,7 @@ export class SupabaseService {
         } = this.supabase.storage.from("cards").getPublicUrl(data?.path);
 
         // Replace images in canvas with uploaded images.
+        // Calls the onImageLoad function after the final image has been loaded into canvas.
         localImage.fabricObject.setSrc(
           publicUrl,
           index === images.length - 1 ? onImageLoad : undefined
@@ -103,6 +119,11 @@ export class SupabaseService {
     });
   }
 
+  /**
+   * Fetch a card from Supabase tables.
+   * @param cardId The id of the card to be fetched.
+   * @returns A promise of a Card object.
+   */
   public async fetchCard(cardId: string): Promise<Card> {
     const { data: queriedCard, error: cardError } = await this.supabase
       .from("card")
@@ -116,6 +137,11 @@ export class SupabaseService {
     return queriedCard[0];
   }
 
+  /**
+   * Fetch all the pages a card have from Supabase tables.
+   * @param cardId The id of the card containing the pages.
+   * @returns A promise of a Page array.
+   */
   public async fetchPages(cardId: string): Promise<Page[]> {
     const { data: queriedPages, error: pageError } = await this.supabase
       .from("page")
@@ -128,4 +154,13 @@ export class SupabaseService {
 
     return queriedPages;
   }
+
+  /**
+   * A wrapper around Supabase's auth.getUser() function, with React's cache to deduplicate requests.
+   */
+  public getUser = cache(async () => {
+    const { data, error } = await this.supabase.auth.getUser();
+
+    if (!error) return data.user;
+  });
 }

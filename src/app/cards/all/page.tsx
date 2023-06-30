@@ -6,18 +6,21 @@ import CardItem from "@/components/ui/cardItem";
 import { Card } from "types/supabase";
 import { useSupabase } from "@/components/supabase/supabaseProvider";
 import { BarLoader } from "react-spinners";
+import { User } from "@supabase/supabase-js";
+import { SupabaseService } from "@/utils/supabase/supabaseService";
 
 export default function CardsPage() {
   const { supabase } = useSupabase();
+  const supabaseService = new SupabaseService(supabase);
 
   const [cards, setCards] = useState<Card[]>([]);
+  const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function getCards() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await supabaseService.getUser();
+      setUser(user);
 
       if (user) {
         const { data: cards } = await supabase
@@ -37,14 +40,37 @@ export default function CardsPage() {
   }, []);
 
   async function deleteCard(cardId: string) {
-    const { error } = await supabase.from("card").delete().eq("id", cardId);
+    if (!user) return;
 
-    if (!error) {
+    setIsLoading(true);
+
+    // Delete all the images in the card.
+    const baseFolderPath = `public/${user.id}/${cardId}`;
+    const { data: images } = await supabase.storage
+      .from("cards")
+      .list(baseFolderPath);
+
+    if (images) {
+      const imagePaths = images.map((image) => {
+        return baseFolderPath + "/" + image.name;
+      });
+
+      await supabase.storage.from("cards").remove(imagePaths);
+    }
+
+    const { error: cardDeleteError } = await supabase
+      .from("card")
+      .delete()
+      .eq("id", cardId);
+
+    if (!cardDeleteError) {
       const newCards = [...cards];
       const deleteCardIndex = newCards.findIndex((card) => card.id === cardId);
 
       newCards.splice(deleteCardIndex, 1);
       setCards(newCards);
+
+      setIsLoading(false);
     }
   }
 
