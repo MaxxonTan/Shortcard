@@ -60,9 +60,21 @@ export class SupabaseService {
       }
     });
 
-    // TODO: Remove any pages that is in the db but not locally (deleted pages).
+    // Sort unsaved pages
+    unsavedPages.sort((a, b) => {
+      if (a.page_index < b.page_index) return -1;
+      else if (a.page_index > b.page_index) return 1;
+
+      return 0;
+    });
+
     while (unsavedPages.length > cardState.pageJSONs.length) {
-      unsavedPages.pop();
+      const deletedPage = unsavedPages.pop();
+
+      const { data } = await this.supabase
+        .from("page")
+        .delete()
+        .eq("id", deletedPage?.id);
     }
 
     await this.supabase.from("page").upsert(unsavedPages).select();
