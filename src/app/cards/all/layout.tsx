@@ -141,7 +141,7 @@ export default function AllCardsLayout({
   };
 
   return (
-    <div className="h-screen px-6 py-8 sm:px-10">
+    <div className="h-full px-6 py-8 sm:px-10">
       <header className="flex items-center">
         {/* Hacky styling with negative top margin here, caused by h1 doesn't align vertically */}
         <Link

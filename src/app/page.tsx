@@ -21,7 +21,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="mx-auto flex h-screen flex-col items-center justify-center ">
+    <main className="mx-auto flex h-full flex-col items-center justify-center ">
       <Image
         src={birthdayCardImage}
         alt="Birthday Card Icon"

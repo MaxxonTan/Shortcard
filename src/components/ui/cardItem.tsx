@@ -21,7 +21,7 @@ export default function CardItem(props: CardItemProp) {
   return (
     <Link
       href={`/cards/${card.id}/edit`}
-      className="group relative flex cursor-pointer flex-col gap-2"
+      className="group relative flex w-full cursor-pointer flex-col gap-2 sm:w-auto"
     >
       <MdDelete
         // Can't change visiblity here because you can't hover over "hidden"
@@ -34,7 +34,7 @@ export default function CardItem(props: CardItemProp) {
           e.nativeEvent.preventDefault();
         }}
       />
-      <div className="h-56 w-56 rounded-md bg-primary ring-neutral-black transition-all group-hover:ring-2" />
+      <div className="h-56 w-auto rounded-md bg-primary ring-neutral-black transition-all group-hover:ring-2 sm:w-56" />
       <h1 className="font-medium text-neutral-black group-hover:underline">
         <b>To:</b> {card.to}
       </h1>
