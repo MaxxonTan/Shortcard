@@ -17,14 +17,14 @@ export default function OpeningMessageContainer(prop: {
 
   return (
     <div
-      className={`absolute z-10 h-full w-full gap-6 bg-primary transition-opacity ${
+      className={`absolute z-10 h-full w-full bg-primary transition-opacity ${
         continued ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
       <div
         className={`${
           isLoaded ? "opacity-100" : "opacity-0"
-        } flex h-full flex-col  items-center justify-center gap-6 p-4 transition-all duration-500 
+        } flex h-full flex-col  items-center justify-center gap-8 p-4 transition-all duration-700 
         `}
       >
         <h1 className="text-center text-5xl text-white">
