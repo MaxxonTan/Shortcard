@@ -23,7 +23,20 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/cards/all", req.url));
   }
 
-  // TODO: Redirect to unathorized page if user goes to card edit page that isn't theirs
+  // Redirect to unathorized page if user goes to card edit page that isn't theirs.
+  if (req.nextUrl.pathname.endsWith("edit")) {
+    // Get card id.
+    const paths = req.nextUrl.pathname.split("/");
+    const cardId = paths[paths.length - 2];
+
+    const { data: card } = await supabase
+      .from("card")
+      .select()
+      .eq("id", cardId);
+
+    if (!card || card[0].user_id !== session?.user.id)
+      return NextResponse.redirect(new URL("/cards/all", req.url));
+  }
 
   return res;
 }

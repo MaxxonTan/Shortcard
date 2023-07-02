@@ -85,6 +85,9 @@ export default function CardsPage() {
             <CardItem card={card} key={card.id} onCardDelete={deleteCard} />
           );
         })}
+      {cards.length === 0 && !isLoading && (
+        <h1 className="text-xl text-neutral-black">No cards created.</h1>
+      )}
     </main>
   );
 }
