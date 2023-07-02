@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/utils/supabase/supabaseServer";
 import { SupabaseService } from "@/utils/supabase/supabaseService";
+import { url } from "inspector";
 import { Metadata, ResolvingMetadata } from "next";
 import CardContainer from "./cardContainer";
 import OpeningMessageContainer from "./openingMessageContainer";
@@ -12,6 +13,7 @@ export async function generateMetadata(
   { params }: MetadataProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  console.log(parent);
   const supabase = createSupabaseServerClient();
   const supabaseService = new SupabaseService(supabase);
 
@@ -20,6 +22,15 @@ export async function generateMetadata(
   return {
     title: `Shortcard for ${card.to}`,
     description: `Check out this card for ${card.to}!`,
+    openGraph: {
+      title: "Shortcard",
+      description: `Check out this card for ${card.to}!`,
+      images: [
+        {
+          url: "/favicon.ico",
+        },
+      ],
+    },
   };
 }
 
