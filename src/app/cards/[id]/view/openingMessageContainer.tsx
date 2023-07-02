@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 
 export default function OpeningMessageContainer(prop: {
   openingMessage: string;
+  from: string;
 }) {
   if (!prop.openingMessage) return <></>;
 
@@ -27,15 +28,14 @@ export default function OpeningMessageContainer(prop: {
         } flex h-full flex-col  items-center justify-center gap-8 p-4 transition-all duration-700 
         `}
       >
-        <h1 className="text-center text-5xl text-white">
-          {prop.openingMessage}
-        </h1>
+        <h1 className="text-5xl text-white">{prop.openingMessage}</h1>
+        <h3 className="text-3xl text-secondary-dark">From: {prop.from}</h3>
         <Button
           color="Secondary"
           onClick={() => {
             setContinued(true);
           }}
-          text="Continue"
+          text="Open Card"
         />
       </div>
     </div>

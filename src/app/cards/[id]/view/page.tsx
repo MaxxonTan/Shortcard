@@ -23,6 +23,7 @@ export default async function ViewCardPage({
       {card && (
         <OpeningMessageContainer
           openingMessage={card[0].opening_message ?? ""}
+          from={card[0].from ?? ""}
         />
       )}
       {pages && <CardContainer pages={pages} />}
