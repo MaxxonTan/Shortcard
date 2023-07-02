@@ -133,7 +133,7 @@ export class SupabaseService {
    * @param cardId The id of the card to be fetched.
    * @returns A promise of a Card object.
    */
-  public async fetchCard(cardId: string): Promise<Card> {
+  public fetchCard = cache(async (cardId: string): Promise<Card> => {
     const { data: queriedCard, error: cardError } = await this.supabase
       .from("card")
       .select()
@@ -144,14 +144,14 @@ export class SupabaseService {
     }
 
     return queriedCard[0];
-  }
+  });
 
   /**
    * Fetch all the pages a card have from Supabase tables.
    * @param cardId The id of the card containing the pages.
    * @returns A promise of a Page array.
    */
-  public async fetchPages(cardId: string): Promise<Page[]> {
+  public fetchPages = cache(async (cardId: string): Promise<Page[]> => {
     const { data: queriedPages, error: pageError } = await this.supabase
       .from("page")
       .select()
@@ -162,7 +162,7 @@ export class SupabaseService {
     }
 
     return queriedPages;
-  }
+  });
 
   /**
    * A wrapper around Supabase's auth.getUser() function, with React's cache to deduplicate requests.
