@@ -3,7 +3,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
     // Added because 50mb serverless function limit is exceeded on vercel.
-    outputFileTracingIgnores: ["**canvas**"],
+    outputFileTracingExcludes: ["**canvas**"],
   },
   images: {
     remotePatterns: [{ hostname: "lh3.googleusercontent.com" }],

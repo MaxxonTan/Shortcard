@@ -30,7 +30,7 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 /**
  * The type of fabric.js objects that are supported in this app.
  */
-type supportedObjectTypes = "textbox" | "image" | "video" | "none";
+type SupportedObjectTypes = "textbox" | "image" | "video" | "none";
 
 export default function EditCardPage(params: { params: { id: string } }) {
   const { supabase } = useSupabase();
@@ -48,7 +48,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
    */
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const [selectedObjectType, setSelectedObjectType] =
-    useState<supportedObjectTypes>("none");
+    useState<SupportedObjectTypes>("none");
 
   /**
    * Keeping a state of page background color because using setBackgroundColor() doesn't cause a re-render,

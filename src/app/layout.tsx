@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Playfair_Display, Roboto_Flex } from "@next/font/google";
+import { Playfair_Display, Roboto_Flex } from "next/font/google";
 
 import SupabaseListener from "@/components/supabase/supabaseListener";
 import SupabaseProvider from "@/components/supabase/supabaseProvider";
