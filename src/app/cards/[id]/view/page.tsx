@@ -13,7 +13,6 @@ export async function generateMetadata(
   { params }: MetadataProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  console.log(parent);
   const supabase = createSupabaseServerClient();
   const supabaseService = new SupabaseService(supabase);
 
@@ -25,11 +24,17 @@ export async function generateMetadata(
     openGraph: {
       title: "Shortcard",
       description: `Check out this card for ${card.to}!`,
+      url: "https://shortcard.vercel.app/",
+      siteName: "shortcard.vercel.app",
       images: [
         {
-          url: "/favicon.ico",
+          url: "/icon.jpg",
+          width: 1000,
+          height: 1000,
         },
       ],
+      locale: "en_US",
+      type: "website",
     },
   };
 }
