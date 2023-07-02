@@ -7,14 +7,14 @@ export default function OpeningMessageContainer(prop: {
   openingMessage: string;
   from: string;
 }) {
-  if (!prop.openingMessage) return <></>;
-
   const [isLoaded, setIsLoaded] = useState(false);
   const [continued, setContinued] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  if (!prop.openingMessage) return <></>;
 
   return (
     <div
