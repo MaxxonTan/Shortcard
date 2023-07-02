@@ -1,6 +1,27 @@
 import { createSupabaseServerClient } from "@/utils/supabase/supabaseServer";
+import { SupabaseService } from "@/utils/supabase/supabaseService";
+import { Metadata, ResolvingMetadata } from "next";
 import CardContainer from "./cardContainer";
 import OpeningMessageContainer from "./openingMessageContainer";
+
+type MetadataProps = {
+  params: { id: string };
+};
+
+export async function generateMetadata(
+  { params }: MetadataProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const supabase = createSupabaseServerClient();
+  const supabaseService = new SupabaseService(supabase);
+
+  const card = await supabaseService.fetchCard(params.id);
+
+  return {
+    title: `Shortcard for ${card.to}`,
+    description: `Check out this card for ${card.to}!`,
+  };
+}
 
 export default async function ViewCardPage({
   params,
@@ -8,22 +29,18 @@ export default async function ViewCardPage({
   params: { id: string };
 }) {
   const supabase = createSupabaseServerClient();
-  const { data: card, error: cardError } = await supabase
-    .from("card")
-    .select()
-    .eq("id", params.id);
+  const supabaseService = new SupabaseService(supabase);
 
-  const { data: pages, error: pageError } = await supabase
-    .from("page")
-    .select()
-    .eq("card_id", params.id);
+  const card = await supabaseService.fetchCard(params.id);
+
+  const pages = await supabaseService.fetchPages(params.id);
 
   return (
     <main className="relative h-full">
       {card && (
         <OpeningMessageContainer
-          openingMessage={card[0].opening_message ?? ""}
-          from={card[0].from ?? ""}
+          openingMessage={card.opening_message ?? ""}
+          from={card.from ?? ""}
         />
       )}
       {pages && <CardContainer pages={pages} />}
