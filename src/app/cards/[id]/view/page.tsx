@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/utils/supabase/supabaseServer";
 import CardContainer from "./cardContainer";
+import OpeningMessageContainer from "./openingMessageContainer";
 
 export default async function ViewCardPage({
   params,
@@ -18,6 +19,13 @@ export default async function ViewCardPage({
     .eq("card_id", params.id);
 
   return (
-    <main className="h-full">{pages && <CardContainer pages={pages} />}</main>
+    <main className="relative h-full">
+      {card && (
+        <OpeningMessageContainer
+          openingMessage={card[0].opening_message ?? ""}
+        />
+      )}
+      {pages && <CardContainer pages={pages} />}
+    </main>
   );
 }

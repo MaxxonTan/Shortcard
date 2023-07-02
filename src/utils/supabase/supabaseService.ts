@@ -71,10 +71,7 @@ export class SupabaseService {
     while (unsavedPages.length > cardState.pageJSONs.length) {
       const deletedPage = unsavedPages.pop();
 
-      const { data } = await this.supabase
-        .from("page")
-        .delete()
-        .eq("id", deletedPage?.id);
+      await this.supabase.from("page").delete().eq("id", deletedPage?.id);
     }
 
     await this.supabase.from("page").upsert(unsavedPages).select();
