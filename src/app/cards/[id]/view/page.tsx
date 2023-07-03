@@ -17,12 +17,10 @@ export async function generateMetadata({
   const card = await supabaseService.fetchCard(params.id);
 
   return {
-    title: `Shortcard for ${card.to}`,
-    description: `Check out this card for ${card.to}!`,
     openGraph: {
       title: `Shortcard for ${card.to}`,
       description: `Check out this card for ${card.to}!`,
-      url: `https://shortcard.vercel.app/cards/${card.id}/view/`,
+      url: `https://shortcard.vercel.app/cards/${card.id}/view`,
       siteName: "shortcard.vercel.app",
       images: [
         {
