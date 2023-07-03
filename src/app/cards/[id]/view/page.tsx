@@ -4,36 +4,36 @@ import { Metadata, ResolvingMetadata } from "next";
 import CardContainer from "./cardContainer";
 import OpeningMessageContainer from "./openingMessageContainer";
 
-type MetadataProps = {
-  params: { id: string };
-};
+// type MetadataProps = {
+//   params: { id: string };
+// };
 
-export async function generateMetadata({
-  params,
-}: MetadataProps): Promise<Metadata> {
-  const supabase = createSupabaseServerClient();
-  const supabaseService = new SupabaseService(supabase);
+// export async function generateMetadata({
+//   params,
+// }: MetadataProps): Promise<Metadata> {
+//   const supabase = createSupabaseServerClient();
+//   const supabaseService = new SupabaseService(supabase);
 
-  const card = await supabaseService.fetchCard(params.id);
+//   const card = await supabaseService.fetchCard(params.id);
 
-  return {
-    openGraph: {
-      title: `Shortcard for ${card.to}`,
-      description: `Check out this card for ${card.to}!`,
-      url: `https://shortcard.vercel.app/cards/${card.id}/view/`,
-      siteName: "shortcard.vercel.app",
-      images: [
-        {
-          url: "/icon.jpg",
-          width: 1000,
-          height: 1000,
-        },
-      ],
-      locale: "en_US",
-      type: "website",
-    },
-  };
-}
+//   return {
+//     openGraph: {
+//       title: `Shortcard for ${card.to}`,
+//       description: `Check out this card for ${card.to}!`,
+//       url: `https://shortcard.vercel.app/cards/${card.id}/view/`,
+//       siteName: "shortcard.vercel.app",
+//       images: [
+//         {
+//           url: "/icon.jpg",
+//           width: 1000,
+//           height: 1000,
+//         },
+//       ],
+//       locale: "en_US",
+//       type: "website",
+//     },
+//   };
+// }
 
 export default async function ViewCardPage({
   params,
