@@ -20,9 +20,9 @@ export async function generateMetadata({
     title: `Shortcard for ${card.to}`,
     description: `Check out this card for ${card.to}!`,
     openGraph: {
-      title: "Shortcard",
+      title: `Shortcard for ${card.to}`,
       description: `Check out this card for ${card.to}!`,
-      url: `https://shortcard.vercel.app/cards/${card.id}/view`,
+      url: `https://shortcard.vercel.app/cards/${card.id}/view/`,
       siteName: "shortcard.vercel.app",
       images: [
         {
