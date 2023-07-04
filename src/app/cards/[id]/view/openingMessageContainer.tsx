@@ -25,7 +25,7 @@ export default function OpeningMessageContainer(prop: {
       <div
         className={`${
           isLoaded ? "opacity-100" : "opacity-0"
-        } flex h-full flex-col  items-center justify-center gap-8 p-4 transition-all duration-700 
+        } flex h-full flex-col  items-center justify-center gap-8 p-4 transition-all duration-1000 
         `}
       >
         <h1 className="text-5xl text-white">{prop.openingMessage}</h1>
