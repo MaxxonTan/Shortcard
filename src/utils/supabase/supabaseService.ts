@@ -85,7 +85,7 @@ export class SupabaseService {
    * Uploads an array of images to Supabase Storage.
    * @param images An array of images object containing the fabric object and the File object.
    * @param cardId The id of the card containing the images.
-   * @returns The url of the uploaded image.
+   * @returns The path of the uploaded image in Supabase storage.
    */
   public async uploadImage(imageObject: File, cardId: string) {
     const user = await this.getUser();
@@ -102,14 +102,20 @@ export class SupabaseService {
       });
 
     if (data) {
-      const {
-        data: { publicUrl },
-      } = this.supabase.storage.from("cards").getPublicUrl(data.path);
-
-      return publicUrl;
+      return data.path;
     }
 
     return "";
+  }
+
+  /**
+   * Deletes a single image from Supabase storage
+   * @param imagePath The path of the image in Supabase Storage.
+   */
+  public async deleteImage(imagePath: string) {
+    const { data, error } = await this.supabase.storage
+      .from("cards")
+      .remove([imagePath]);
   }
 
   /**

@@ -17,7 +17,10 @@ export function generateTextboxObject() {
  * @param imageElement The HTML image element for the Fabric.Image object.
  * @returns A Fabric.Image object.
  */
-export function generateImageObject(imageElement: HTMLImageElement) {
+export function generateImageObject(
+  imageElement: HTMLImageElement,
+  onDelete: () => void
+) {
   const image = new fabric.Image(imageElement, {
     centeredScaling: true,
     scaleX: 0.1,
@@ -25,13 +28,17 @@ export function generateImageObject(imageElement: HTMLImageElement) {
     cornerSize: 24,
   });
 
-  image.controls["tr"] = generateDeleteControl();
+  image.controls["tr"] = generateDeleteControl(onDelete);
   image.controls["tl"] = generateCloneControl();
 
   return image;
 }
 
-export function generateDeleteControl() {
+/**
+ * Generates a fabric.Control object with custom icon and deletes object from canvas.
+ * @param optionalCallback Any additional function you want to call besides deleting object from canvas.
+ */
+export function generateDeleteControl(optionalCallback?: () => void) {
   return new fabric.Control({
     x: 0.5,
     y: -0.5,
@@ -43,6 +50,8 @@ export function generateDeleteControl() {
       if (canvas) {
         canvas.remove(target);
         canvas.requestRenderAll();
+
+        if (optionalCallback) optionalCallback();
 
         return true;
       }

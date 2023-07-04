@@ -144,7 +144,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
      * Hack to display custom controls on load without adding any textbox / image element.
      * For some reason editing the fabric.object controls prototype does not work.
      */
-    const image = generateImageObject(document.createElement("img"));
+    const image = generateImageObject(document.createElement("img"), () => {});
     const textbox = generateTextboxObject();
     fabricRef.current.add(image, textbox);
     fabricRef.current.remove(image, textbox);
@@ -257,16 +257,24 @@ export default function EditCardPage(params: { params: { id: string } }) {
         new Compressor(file, {
           quality: 0.5,
           async success(compressedImage) {
-            const imageURL = await supabaseService.uploadImage(
+            const imagePath = await supabaseService.uploadImage(
               compressedImage as File,
               params.params.id
             );
+
+            const {
+              data: { publicUrl: imageURL },
+            } = supabase.storage.from("cards").getPublicUrl(imagePath);
 
             const imageElement = document.createElement("img");
             imageElement.src = imageURL;
             imageElement.addEventListener("load", () => {
               // Generate Image object with custom controls
-              const image = generateImageObject(imageElement);
+              const image = generateImageObject(imageElement, async () => {
+                setIsLoading(true);
+                await supabaseService.deleteImage(imagePath);
+                setIsLoading(false);
+              });
 
               if (!fabricRef.current) return;
               fabricRef.current.add(image);
