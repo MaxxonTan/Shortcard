@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 export default function OpeningMessageContainer(prop: {
   openingMessage: string;
   from: string;
+  to: string;
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [continued, setContinued] = useState(false);
@@ -29,7 +30,10 @@ export default function OpeningMessageContainer(prop: {
         `}
       >
         <h1 className="text-5xl text-white">{prop.openingMessage}</h1>
-        <h3 className="text-3xl text-secondary-dark">From: {prop.from}</h3>
+        <h3 className="text-2xl text-secondary-dark">
+          From <b className="font-sans">{prop.from}</b> to{" "}
+          <b className="font-sans">{prop.to}</b>
+        </h3>
         <Button
           color="Secondary"
           onClick={() => {
