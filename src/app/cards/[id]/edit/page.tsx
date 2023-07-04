@@ -169,35 +169,35 @@ export default function EditCardPage(params: { params: { id: string } }) {
       toPageIndex: cardState.currentPageIndex,
     });
 
-    if (newCardState.localImages.length > 0) {
-      await supabaseService.uploadImages(
-        newCardState.localImages,
-        params.params.id,
-        async () => {
-          if (!fabricRef.current) return;
+    // if (newCardState.localImages.length > 0) {
+    //   await supabaseService.uploadImage(
+    //     newCardState.localImages,
+    //     params.params.id,
+    //     async () => {
+    //       if (!fabricRef.current) return;
 
-          cardStateDispatch({ type: "clearLocalImages" });
+    //       cardStateDispatch({ type: "clearLocalImages" });
 
-          // Call change page again because the source in image objects in the canvas have changed.
-          newCardState = cardEditReducer(cardState, {
-            type: "changePage",
-            currentPageJSON: JSON.stringify(fabricRef.current),
-            toPageIndex: cardState.currentPageIndex,
-          });
+    //       // Call change page again because the source in image objects in the canvas have changed.
+    //       newCardState = cardEditReducer(cardState, {
+    //         type: "changePage",
+    //         currentPageJSON: JSON.stringify(fabricRef.current),
+    //         toPageIndex: cardState.currentPageIndex,
+    //       });
 
-          await supabaseService.updateCard(
-            newCardState,
-            pages.current,
-            params.params.id,
-            fabricRef.current
-          );
+    //       await supabaseService.updateCard(
+    //         newCardState,
+    //         pages.current,
+    //         params.params.id,
+    //         fabricRef.current
+    //       );
 
-          setIsLoading(false);
-        }
-      );
+    //       setIsLoading(false);
+    //     }
+    //   );
 
-      return;
-    }
+    //   return;
+    // }
 
     await supabaseService.updateCard(
       newCardState,
@@ -245,6 +245,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
    * @param e The event fired after user selects a photo from input.
    */
   function addImage(e: ChangeEvent<HTMLInputElement>) {
+    setIsLoading(true);
     const files = Array.from(e.target.files ?? []);
 
     // For each media the user uploads, generate a fabric object and add it to the canvas
@@ -255,8 +256,11 @@ export default function EditCardPage(params: { params: { id: string } }) {
         // Compress image
         new Compressor(file, {
           quality: 0.5,
-          success(compressedImage) {
-            const imageURL = URL.createObjectURL(compressedImage);
+          async success(compressedImage) {
+            const imageURL = await supabaseService.uploadImage(
+              compressedImage as File,
+              params.params.id
+            );
 
             const imageElement = document.createElement("img");
             imageElement.src = imageURL;
@@ -269,11 +273,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
               fabricRef.current.setActiveObject(image);
               fabricRef.current.renderAll();
 
-              cardStateDispatch({
-                type: "addImage",
-                fabricObject: image,
-                imageObject: compressedImage as File,
-              });
+              setIsLoading(false);
             });
           },
         });

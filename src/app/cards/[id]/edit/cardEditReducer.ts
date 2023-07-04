@@ -5,10 +5,6 @@ export type CardEditState = {
   // Index of current page in pageJsons.
   currentPageIndex: number;
   openingMessage: string;
-  localImages: {
-    fabricObject: fabric.Image;
-    imageObject: File;
-  }[];
 };
 
 type CardEditAction =
@@ -33,15 +29,12 @@ type CardEditAction =
     }
   | { type: "loadPage"; pages: Page[] }
   | { type: "loadCard"; card: Card }
-  | { type: "updateOpeningMessage"; newOpeningMessage: string }
-  | { type: "addImage"; fabricObject: fabric.Image; imageObject: File }
-  | { type: "clearLocalImages" };
+  | { type: "updateOpeningMessage"; newOpeningMessage: string };
 
 export const initialCardEdit: CardEditState = {
   pageJSONs: [""],
   currentPageIndex: -1,
   openingMessage: "",
-  localImages: [],
 };
 
 export function cardEditReducer(
@@ -108,26 +101,6 @@ export function cardEditReducer(
     case "updateOpeningMessage": {
       const result = { ...newCardState };
       result.openingMessage = action.newOpeningMessage;
-
-      return result;
-    }
-    case "addImage": {
-      const result = { ...newCardState };
-
-      result.localImages = [
-        ...result.localImages,
-        {
-          fabricObject: action.fabricObject,
-          imageObject: action.imageObject,
-        },
-      ];
-
-      return result;
-    }
-    case "clearLocalImages": {
-      const result = { ...newCardState };
-
-      result.localImages = [];
 
       return result;
     }

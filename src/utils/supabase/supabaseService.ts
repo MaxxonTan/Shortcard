@@ -85,47 +85,31 @@ export class SupabaseService {
    * Uploads an array of images to Supabase Storage.
    * @param images An array of images object containing the fabric object and the File object.
    * @param cardId The id of the card containing the images.
-   * @param onImageLoad The callback function after the uploaded images are loaded back into the canvas.
+   * @returns The url of the uploaded image.
    */
-  public async uploadImages(
-    images: {
-      fabricObject: Image;
-      imageObject: File;
-    }[],
-    cardId: string,
-    onImageLoad: () => void
-  ) {
-    const {
-      data: { user },
-      error: userError,
-    } = await this.supabase.auth.getUser();
+  public async uploadImage(imageObject: File, cardId: string) {
+    const user = await this.getUser();
 
-    images.forEach(async (localImage, index) => {
-      // If local image has been deleted from canvas before saving
-      if (!localImage.fabricObject.canvas) return;
+    if (!user) return "";
 
-      // Upload images.
-      const { data, error } = await this.supabase.storage
-        .from("cards")
-        .upload(
-          `public/${user?.id}/${cardId}/${localImage.imageObject.name}`,
-          localImage.imageObject,
-          { upsert: true }
-        );
+    // Upload image.
+    // TODO: Use image name instead of uuid, so that we can just reference the same remote image if there's
+    // a lot of object with the same image. Have to parse the image name to desired format i.e. no empty spaces.
+    const { data, error } = await this.supabase.storage
+      .from("cards")
+      .upload(`public/${user?.id}/${cardId}/${uuidv4()}`, imageObject, {
+        upsert: true,
+      });
 
-      if (data) {
-        const {
-          data: { publicUrl },
-        } = this.supabase.storage.from("cards").getPublicUrl(data?.path);
+    if (data) {
+      const {
+        data: { publicUrl },
+      } = this.supabase.storage.from("cards").getPublicUrl(data.path);
 
-        // Replace images in canvas with uploaded images.
-        // Calls the onImageLoad function after the final image has been loaded into canvas.
-        localImage.fabricObject.setSrc(
-          publicUrl,
-          index === images.length - 1 ? onImageLoad : undefined
-        );
-      }
-    });
+      return publicUrl;
+    }
+
+    return "";
   }
 
   /**
