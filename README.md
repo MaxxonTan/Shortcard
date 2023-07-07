@@ -36,7 +36,7 @@ Generate and share birthday/holiday cards with a link, with **no downloads** req
 
 
 # Features
-- Sign in with **Google** (only)
-- Display an optional **opening messag**e when someone opens your card.
-- **Mobile-Friendly** pages for both viewing and editing the cards
-- Unique **link** generated for each card. 
+- Sign in with **Google** (only) 🔐
+- Display an optional **opening message** when someone opens your card. 💌 
+- **Mobile-Friendly** pages for both viewing and editing the cards 📱
+- Unique **link** generated for each card. 🔗
