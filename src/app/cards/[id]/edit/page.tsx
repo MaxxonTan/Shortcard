@@ -290,7 +290,7 @@ export default function EditCardPage(params: { params: { id: string } }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-8">
+    <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-8">
       <div className="flex max-w-md flex-1 flex-col gap-2 md:mr-auto md:max-w-xs">
         <TextField
           label="Opening Message"
