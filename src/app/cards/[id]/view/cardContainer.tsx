@@ -97,6 +97,7 @@ export default function CardContainer({ pages }: CardContainerProp) {
           }
           isDisabled={pageIndex === 0}
           extraClassnames="lg:hidden"
+          tooltip="Previous Page"
         />
         <Button
           color="Transparent"
@@ -111,6 +112,7 @@ export default function CardContainer({ pages }: CardContainerProp) {
             />
           }
           isDisabled={pageIndex === pages.length - 1}
+          tooltip="Next Page"
         />
       </div>
       <div className="absolute bottom-0 w-full bg-primary px-5 py-3 md:bottom-5 md:w-auto md:rounded-full md:py-1">
