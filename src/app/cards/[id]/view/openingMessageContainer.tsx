@@ -29,8 +29,10 @@ export default function OpeningMessageContainer(prop: {
         } flex h-full flex-col  items-center justify-center gap-8 p-4 transition-all duration-1000 
         `}
       >
-        <h1 className="text-5xl text-white">{prop.openingMessage}</h1>
-        <h3 className="text-2xl text-secondary-dark">
+        <h1 className="text-center text-4xl text-white md:text-5xl">
+          {prop.openingMessage}
+        </h1>
+        <h3 className="text-xl text-secondary-dark md:text-2xl">
           From <b className="font-sans">{prop.from}</b> to{" "}
           <b className="font-sans">{prop.to}</b>
         </h3>
