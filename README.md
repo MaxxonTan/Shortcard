@@ -20,7 +20,13 @@ Generate and share birthday/holiday cards with a link, with **no downloads** req
 	<img alt="Static Badge" src="https://img.shields.io/badge/DB-Supabase-green?style=for-the-badge">
   </a>
 </p>
-	  
+
+# Features
+- Sign in with **Google** (only) 🔐
+- Display an optional **opening message** when someone opens your card. 💌 
+- **Mobile-Friendly** pages for both viewing and editing the cards 📱
+- Unique **link** generated for each card. 🔗
+   
 # Usage
 **Once you have signed in with Google, you can create a card detailing who it's for and from:**
 
@@ -33,12 +39,6 @@ Generate and share birthday/holiday cards with a link, with **no downloads** req
 **That's it!** <a href="https://shortcard.vercel.app/cards/0cbba25c-3c75-4292-8ff1-4693aeec386a/view">Sample card</a>
 
 ![ViewCard](https://github.com/MaxxonTan/Shortcard/assets/59834451/634ebe12-5d9e-4167-ae6b-c2326fabe552)
-
-# Features
-- Sign in with **Google** (only) 🔐
-- Display an optional **opening message** when someone opens your card. 💌 
-- **Mobile-Friendly** pages for both viewing and editing the cards 📱
-- Unique **link** generated for each card. 🔗
 
 # Tech stack and dependencies
 - This project is built with the React framework [**Next.js 13.4.7** ](https://nextjs.org/) and it's app directory.
