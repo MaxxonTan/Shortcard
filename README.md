@@ -49,6 +49,13 @@ Generate and share birthday/holiday cards with a link, with **no downloads** req
 - [**React Icons**](https://react-icons.github.io/react-icons) and [**React Spinners**](https://www.davidhu.io/react-spinners/) for icons and spinning.  
 
 # Local Development
+Before running this app, make sure you have [Node.js](https://nodejs.org/en) installed and have a `.env` file created in the root of the project (it's needed to connect to a database). When running locally, the app is configured to connect to the Supabase project configured in `.env.local`. Check out `.env.local.sample` to see what you need to configure. The public url and anon key can be found in your Supabase project's API settings.
+
+To run the app, run the following commands:
+```
+npm install
+npm run dev
+```
 
 # Tech stack choices (move this to WIKI)
 - fabric.js loading images have a noticable delay.
