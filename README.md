@@ -56,7 +56,3 @@ To run the app, run the following commands:
 npm install
 npm run dev
 ```
-
-# Tech stack choices (move this to WIKI)
-- fabric.js loading images have a noticable delay.
-- Why video isn't supported (free tier on supabase). 
