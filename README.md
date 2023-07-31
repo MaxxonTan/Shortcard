@@ -56,3 +56,5 @@ To run the app, run the following commands:
 npm install
 npm run dev
 ```
+# Additional Documentation
+Check out [the wiki page](https://github.com/MaxxonTan/Shortcard/wiki)https://github.com/MaxxonTan/Shortcard/wiki!
