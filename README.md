@@ -57,4 +57,4 @@ npm install
 npm run dev
 ```
 # Additional Documentation
-Check out [the wiki page](https://github.com/MaxxonTan/Shortcard/wiki)https://github.com/MaxxonTan/Shortcard/wiki!
+Check out [the wiki page](https://github.com/MaxxonTan/Shortcard/wiki)!
